@@ -14,9 +14,4 @@ final class Transformable extends Annotation
      * @var string
      */
     public $name = 'debug';
-
-    /**
-     * @var array
-     */
-    public $options = [];
 }

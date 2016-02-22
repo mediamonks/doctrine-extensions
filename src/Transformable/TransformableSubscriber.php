@@ -4,7 +4,6 @@ namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventArgs;
 use Gedmo\Mapping\MappedEventSubscriber;
-use MediaMonks\Doctrine\Transformable\Transformer\DebugTransformer;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
 
@@ -14,6 +13,9 @@ use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
  */
 class TransformableSubscriber extends MappedEventSubscriber
 {
+    const FUNCTION_TRANSFORM = 'transform';
+    const FUNCTION_REVERSE_TRANSFORM = 'reverseTransform';
+
     /**
      * @var TransformerPool
      */
@@ -68,33 +70,11 @@ class TransformableSubscriber extends MappedEventSubscriber
         $uow = $om->getUnitOfWork();
 
         foreach ($ea->getScheduledObjectUpdates($uow) as $object) {
-            $meta   = $om->getClassMetadata(get_class($object));
-            $config = $this->getConfiguration($om, $meta->name);
-
-            if (isset($config['transformable']) && $config['transformable']) {
-                foreach ($config['transformable'] as $column) {
-                    $reflProp = $meta->getReflectionProperty($column['field']);
-                    $oldValue = $reflProp->getValue($object);
-                    $reflProp->setValue($object,
-                        $this->getTransformer($column['name'], $column['options'])->transform($oldValue));
-                }
-                $ea->recomputeSingleObjectChangeSet($uow, $meta, $object);
-            }
+            $this->handle($ea, $om, $uow, $object, self::FUNCTION_TRANSFORM);
         }
 
         foreach ($ea->getScheduledObjectInsertions($uow) as $object) {
-            $meta   = $om->getClassMetadata(get_class($object));
-            $config = $this->getConfiguration($om, $meta->name);
-
-            if (isset($config['transformable']) && $config['transformable']) {
-                foreach ($config['transformable'] as $column) {
-                    $reflProp = $meta->getReflectionProperty($column['field']);
-                    $oldValue = $reflProp->getValue($object);
-                    $reflProp->setValue($object,
-                        $this->getTransformer($column['name'], $column['options'])->transform($oldValue));
-                }
-                $ea->recomputeSingleObjectChangeSet($uow, $meta, $object);
-            }
+            $this->handle($ea, $om, $uow, $object, self::FUNCTION_TRANSFORM);
         }
     }
 
@@ -106,29 +86,40 @@ class TransformableSubscriber extends MappedEventSubscriber
         $ea     = $this->getEventAdapter($args);
         $om     = $ea->getObjectManager();
         $object = $ea->getObject();
-        $meta   = $om->getClassMetadata(get_class($object));
 
+        $this->handle($ea, $om, $om->getUnitOfWork(), $object, self::FUNCTION_REVERSE_TRANSFORM);
+    }
+
+    /**
+     * @param $ea
+     * @param $om
+     * @param $uow
+     * @param object $object
+     * @param string $method
+     */
+    protected function handle($ea, $om, $uow, $object, $method)
+    {
+        $meta   = $om->getClassMetadata(get_class($object));
         $config = $this->getConfiguration($om, $meta->name);
+
         if (isset($config['transformable']) && $config['transformable']) {
             foreach ($config['transformable'] as $column) {
                 $reflProp = $meta->getReflectionProperty($column['field']);
                 $oldValue = $reflProp->getValue($object);
                 $reflProp->setValue($object,
-                    $this->getTransformer($column['name'], $column['options'])->reverseTransform($oldValue));
+                    $this->getTransformer($column['name'])->$method($oldValue));
             }
+            $ea->recomputeSingleObjectChangeSet($uow, $meta, $object);
         }
     }
 
     /**
      * @param $name
-     * @param array $options
      * @return TransformerInterface
      */
-    protected function getTransformer($name, $options)
+    protected function getTransformer($name)
     {
-        $transformer = $this->transformerPool->get($name);
-        $transformer->setOptions($options);
-        return $transformer;
+        return $this->transformerPool->get($name);
     }
 
     /**

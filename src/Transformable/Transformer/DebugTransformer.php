@@ -2,7 +2,7 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-abstract class AbstractTransformer implements TransformerInterface
+class DebugTransformer extends AbstractTransformer
 {
     /**
      * @param string $value

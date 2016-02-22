@@ -29,8 +29,7 @@ class Annotation extends AbstractAnnotationDriver
 
                 $config['transformable'][] = [
                     'field'   => $field,
-                    'name'    => $transformable->name,
-                    'options' => $transformable->options
+                    'name'    => $transformable->name
                 ];
             }
         }

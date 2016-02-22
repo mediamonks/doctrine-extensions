@@ -76,6 +76,4 @@ class TransformerPool implements \ArrayAccess
         }
         return $this;
     }
-
-
 }
