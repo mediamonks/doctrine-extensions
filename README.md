@@ -14,4 +14,4 @@ These extensions add more functionality to Doctrine2.
 Documentation
 =============
 
-Please refer to the files in the [/Resources/doc](/Resources/doc) folder.
+Please refer to the files in the [/doc](/doc) folder.
