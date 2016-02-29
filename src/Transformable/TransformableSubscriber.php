@@ -3,6 +3,9 @@
 namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventArgs;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\UnitOfWork;
+use Gedmo\Mapping\Event\Adapter\ORM;
 use Gedmo\Mapping\MappedEventSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
@@ -13,13 +16,23 @@ use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
  */
 class TransformableSubscriber extends MappedEventSubscriber
 {
+    const TRANSFORMABLE = 'transformable';
+
     const FUNCTION_TRANSFORM = 'transform';
     const FUNCTION_REVERSE_TRANSFORM = 'reverseTransform';
+
+    const TYPE_TRANSFORMED = 'transformed';
+    const TYPE_PLAIN = 'plain';
 
     /**
      * @var TransformerPool
      */
     protected $transformerPool;
+
+    /**
+     * @var array
+     */
+    protected $entityData = [];
 
     /**
      * TransformableListener constructor.
@@ -47,9 +60,17 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @param EventArgs $args
      */
-    public function postUpdate(EventArgs $args)
+    public function onFlush(EventArgs $args)
     {
-        $this->postPersist($args);
+        $this->transform($args);
+    }
+
+    /**
+     * @param EventArgs $args
+     */
+    public function postPersist(EventArgs $args)
+    {
+        $this->reverseTransform($args);
     }
 
     /**
@@ -57,13 +78,21 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     public function postLoad(EventArgs $args)
     {
-        $this->postPersist($args);
+        $this->reverseTransform($args);
     }
 
     /**
      * @param EventArgs $args
      */
-    public function onFlush(EventArgs $args)
+    public function postUpdate(EventArgs $args)
+    {
+        $this->reverseTransform($args);
+    }
+
+    /**
+     * @param EventArgs $args
+     */
+    protected function transform(EventArgs $args)
     {
         $ea  = $this->getEventAdapter($args);
         $om  = $ea->getObjectManager();
@@ -81,36 +110,101 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @param EventArgs $args
      */
-    public function postPersist(EventArgs $args)
+    protected function reverseTransform(EventArgs $args)
     {
-        $ea     = $this->getEventAdapter($args);
-        $om     = $ea->getObjectManager();
-        $object = $ea->getObject();
+        $ea = $this->getEventAdapter($args);
+        $om = $ea->getObjectManager();
 
-        $this->handle($ea, $om, $om->getUnitOfWork(), $object, self::FUNCTION_REVERSE_TRANSFORM);
+        $this->handle($ea, $om, $om->getUnitOfWork(), $ea->getObject(), self::FUNCTION_REVERSE_TRANSFORM);
     }
 
     /**
-     * @param $ea
-     * @param $om
-     * @param $uow
-     * @param object $object
+     * @param ORM $ea
+     * @param EntityManager $om
+     * @param UnitOfWork $uow
+     * @param object $entity
      * @param string $method
      */
-    protected function handle($ea, $om, $uow, $object, $method)
+    protected function handle(ORM $ea, EntityManager $om, UnitOfWork $uow, $entity, $method)
     {
-        $meta   = $om->getClassMetadata(get_class($object));
+        $meta   = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
 
-        if (isset($config['transformable']) && $config['transformable']) {
-            foreach ($config['transformable'] as $column) {
-                $reflProp = $meta->getReflectionProperty($column['field']);
-                $oldValue = $reflProp->getValue($object);
-                $reflProp->setValue($object,
-                    $this->getTransformer($column['name'])->$method($oldValue));
+        if (isset($config[self::TRANSFORMABLE]) && $config[self::TRANSFORMABLE]) {
+            foreach ($config[self::TRANSFORMABLE] as $column) {
+                $this->handleField($entity, $method, $column, $meta);
             }
-            $ea->recomputeSingleObjectChangeSet($uow, $meta, $object);
+            $ea->recomputeSingleObjectChangeSet($uow, $meta, $entity);
         }
+    }
+
+    /**
+     * @param $entity
+     * @param $method
+     * @param $column
+     * @param $meta
+     */
+    protected function handleField($entity, $method, $column, $meta)
+    {
+        $field = $column['field'];
+        $oid = spl_object_hash($entity);
+
+        $reflProp = $meta->getReflectionProperty($field);
+        $oldValue = $reflProp->getValue($entity);
+
+        if ($method === self::FUNCTION_TRANSFORM
+            && $this->getOriginalPlainFieldValue($oid, $field) === $oldValue
+        ) {
+            $newValue = $this->getOriginalTransformedFieldValue($oid, $field);
+        } else {
+            $newValue = $this->getTransformer($column['name'])->$method($oldValue);
+        }
+
+        $reflProp->setValue($entity, $newValue);
+
+        if ($method === self::FUNCTION_REVERSE_TRANSFORM) {
+            $this->storeOriginalFieldData($oid, $field, $oldValue, $newValue);
+        }
+    }
+
+    /**
+     * @param $oid
+     * @param $field
+     * @return null
+     */
+    protected function getOriginalPlainFieldValue($oid, $field)
+    {
+        if(!isset($this->entityData[$oid][$field])) {
+            return null;
+        }
+        return $this->entityData[$oid][$field][self::TYPE_PLAIN];
+    }
+
+    /**
+     * @param $oid
+     * @param $field
+     * @return mixed
+     */
+    protected function getOriginalTransformedFieldValue($oid, $field)
+    {
+        if(!isset($this->entityData[$oid][$field])) {
+            return null;
+        }
+        return $this->entityData[$oid][$field][self::TYPE_TRANSFORMED];
+    }
+
+    /**
+     * @param $oid
+     * @param $field
+     * @param $transformed
+     * @param $plain
+     */
+    protected function storeOriginalFieldData($oid, $field, $transformed, $plain)
+    {
+        $this->entityData[$oid][$field] = [
+            self::TYPE_TRANSFORMED => $transformed,
+            self::TYPE_PLAIN => $plain
+        ];
     }
 
     /**
