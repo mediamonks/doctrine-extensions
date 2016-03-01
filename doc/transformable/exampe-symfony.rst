@@ -58,13 +58,13 @@ Configure entity:
     class Example
     {
         /**
-         * @ORM\Column(type="string")
+         * @ORM\Column(type="blob")
          * @MediaMonks\Transformable(name="encrypt")
          */
-        protected $fieldToEncrypt;
+        protected $email;
 
         /**
-         * @ORM\Column(type="string")
+         * @ORM\Column(type="blob")
          * @MediaMonks\Transformable(name="hash")
          */
-        protected $fieldToHash;
+        protected $emailCanonical;
