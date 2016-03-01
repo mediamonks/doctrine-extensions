@@ -15,7 +15,12 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
     /**
      * @var bool
      */
-    protected $hex = true;
+    protected $binary = true;
+
+    /**
+     * @var bool
+     */
+    protected $requireStrongRandomGenerator = true;
 
     /**
      * @param SymmetricInterface $crypt
@@ -24,65 +29,46 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
     public function __construct(SymmetricInterface $crypt, array $options = [])
     {
         $this->crypt = $crypt;
-        $this->setOptions($options);
-    }
-
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options = [])
-    {
-        if(isset($options['hex'])) {
-            $this->setHex($options['hex']);
+        if(isset($options['binary'])) {
+            $this->binary = $options['binary'];
         }
-        return $this;
+        if(isset($options['requireStrongRandomGenerator'])) {
+            $this->requireStrongRandomGenerator = $options['requireStrongRandomGenerator'];
+        }
     }
 
     /**
-     * @return boolean
-     */
-    public function getHex()
-    {
-        return $this->hex;
-    }
-
-    /**
-     * @param boolean $hex
-     * @return $this
-     */
-    public function setHex($hex)
-    {
-        $this->hex = $hex;
-        return $this;
-    }
-
-    /**
-     * Implementation of EncryptorInterface encrypt method
-     * @param string $data
+     * @param string $value
      * @return string
      */
-    public function transform($data)
+    public function transform($value)
     {
-        $this->crypt->setSalt(Rand::getBytes($this->crypt->getSaltSize(), true));
-        $data = $this->crypt->encrypt($data);
-        if($this->getHex()) {
-            $data = bin2hex($data);
+        $this->updateSalt();
+        $value = $this->crypt->encrypt($value);
+        if(!$this->binary) {
+            $value = bin2hex($value);
         }
-        return $data;
+        return $value;
     }
 
     /**
-     * Implementation of EncryptorInterface decrypt method
-     * @param string $data
+     * @param string $value
      * @return string
      */
-    public function reverseTransform($data)
+    public function reverseTransform($value)
     {
-        if($this->getHex()) {
-            $data = hex2bin($data);
+        if(!$this->binary) {
+            $value = hex2bin($value);
         }
-        return $this->crypt->decrypt($data);
+        return $this->crypt->decrypt($value);
+    }
+
+    /**
+     *
+     */
+    protected function updateSalt()
+    {
+        $this->crypt->setSalt(Rand::getBytes($this->crypt->getSaltSize(), $this->requireStrongRandomGenerator));
     }
 }
 

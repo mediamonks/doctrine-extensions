@@ -17,12 +17,18 @@ Configure services:
 
         mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric:
             class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptSymmetricTransformer
-            arguments: [@zend.crypt.symmetric_encrypter]
+            lazy: true
+            arguments: ["@zend.crypt.symmetric_encrypter"]
+
+        mediamonks.doctrine.transformable.transformer.zend_crypt_hash:
+            class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHashTransformer
+            lazy: true
 
         mediamonks.doctrine.transformable.transformer_pool:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
             calls:
-                - [set, ['encrypt_symmetric', @mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric]]
+                - [set, ['encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
+                - [set, ['hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
 
         doctrine.transformable.subscriber:
             class: MediaMonks\Doctrine\Transformable\TransformableSubscriber
@@ -49,6 +55,12 @@ Configure entity:
     {
         /**
          * @ORM\Column(type="string")
-         * @MediaMonks\Transformable(name="encrypt_symmetric")
+         * @MediaMonks\Transformable(name="encrypt")
          */
         protected $fieldToEncrypt;
+
+        /**
+         * @ORM\Column(type="string")
+         * @MediaMonks\Transformable(name="hash")
+         */
+        protected $fieldToHash;
