@@ -2,9 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hash;
+use Zend\Crypt\Hmac;
 
-class ZendCryptHashTransformer extends AbstractTransformer
+class ZendCryptHmacTransformer extends AbstractTransformer
 {
     /**
      * @var string
@@ -17,9 +17,10 @@ class ZendCryptHashTransformer extends AbstractTransformer
     protected $binary = true;
 
     /**
+     * @param string $key
      * @param array $options
      */
-    public function __construct(array $options = [])
+    public function __construct($key, array $options = [])
     {
         if(isset($options['algorithm'])) {
             $this->algorithm = $options['algorithm'];
@@ -35,7 +36,7 @@ class ZendCryptHashTransformer extends AbstractTransformer
      */
     public function transform($value)
     {
-        return Hash::compute($this->algorithm, $value, $this->binary);
+        return Hmac::compute($this->key, $this->algorithm, $value, $this->binary);
     }
 }
 
