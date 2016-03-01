@@ -8,6 +8,7 @@ Configure services:
     # app/config/parameters.yml
     parameters:
         encryption_key: a_key_stronger_than_this_example
+        hmac_key: a_key_stronger_than_this_example
 
     services:
         zend.crypt.symmetric_encrypter:
@@ -17,18 +18,21 @@ Configure services:
 
         mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric:
             class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptSymmetricTransformer
-            lazy: true
             arguments: ["@zend.crypt.symmetric_encrypter"]
 
         mediamonks.doctrine.transformable.transformer.zend_crypt_hash:
             class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHashTransformer
-            lazy: true
+
+        mediamonks.doctrine.transformable.transformer.zend_crypt_hmac:
+            class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHmacTransformer
+            arguments: [%hmac_key%]
 
         mediamonks.doctrine.transformable.transformer_pool:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
             calls:
                 - [set, ['encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
                 - [set, ['hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
+                - [set, ['hmac', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hmac"]]
 
         doctrine.transformable.subscriber:
             class: MediaMonks\Doctrine\Transformable\TransformableSubscriber
