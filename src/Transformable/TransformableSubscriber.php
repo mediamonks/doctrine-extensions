@@ -3,7 +3,7 @@
 namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventArgs;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\UnitOfWork;
 use Gedmo\Mapping\Event\Adapter\ORM;
 use Gedmo\Mapping\MappedEventSubscriber;
@@ -120,12 +120,12 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param ORM $ea
-     * @param EntityManager $om
+     * @param ObjectManager $om
      * @param UnitOfWork $uow
      * @param object $entity
      * @param string $method
      */
-    protected function handle(ORM $ea, EntityManager $om, UnitOfWork $uow, $entity, $method)
+    protected function handle(ORM $ea, ObjectManager $om, UnitOfWork $uow, $entity, $method)
     {
         $meta   = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
