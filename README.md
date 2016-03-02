@@ -28,3 +28,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 # Documentation
 
 Please refer to the files in the [/doc](/doc) folder.
+
+# Credits
+
+This package was inspired by/uses code from [gedmo/doctrine-extensions](https://packagist.org/packages/gedmo/doctrine-extensions).
