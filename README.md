@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/MediaMonks/doctrine-extensions.svg?branch=master)](https://travis-ci.org/MediaMonks/doctrine-extensions)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/?branch=master)
 [![Total Downloads](https://poser.pugx.org/mediamonks/doctrine-extensions/downloads)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Stable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/stable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Unstable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/unstable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
