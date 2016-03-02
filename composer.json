@@ -36,7 +36,8 @@
     "doctrine/orm": ">=2.5.0",
     "doctrine/common": ">=2.5.0",
     "phpunit/phpunit": "^4.8",
-    "zendframework/zend-crypt": "^2.6"
+    "zendframework/zend-crypt": "^2.6",
+    "mockery/mockery": "^0.9.4"
   },
   "suggest": {
     "doctrine/orm": "to use the extensions with the ORM",

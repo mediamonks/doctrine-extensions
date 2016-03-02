@@ -12,6 +12,11 @@ class ZendCryptHmacTransformer extends AbstractTransformer
     protected $algorithm = 'sha256';
 
     /**
+     * @var string
+     */
+    protected $key;
+
+    /**
      * @var bool
      */
     protected $binary = true;
@@ -22,6 +27,8 @@ class ZendCryptHmacTransformer extends AbstractTransformer
      */
     public function __construct($key, array $options = [])
     {
+        $this->key = $key;
+
         if(isset($options['algorithm'])) {
             $this->algorithm = $options['algorithm'];
         }

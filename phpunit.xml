@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit
-    bootstrap="./vendor/autoload.php"
-    colors="true"
-    beStrictAboutTestsThatDoNotTestAnything="true"
-    checkForUnintentionallyCoveredCode="true"
-    beStrictAboutTestSize="true"
-    beStrictAboutChangesToGlobalState="true">
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="./tests/bootstrap.php"
+>
     <testsuites>
-        <testsuite name="MediaMonksRestApiBundle">
-            <directory suffix="Test.php">./Tests</directory>
+        <testsuite name="Transformable Extension">
+            <directory suffix="Test.php">./tests/src/Transformable/</directory>
         </testsuite>
     </testsuites>
 
