@@ -18,7 +18,7 @@ before_script:
   - composer self-update
 
 install:
-  - if [ "$TRAVIS_PHP_VERSION" == "5.4" ]; then composer require composer require zendframework/zend-crypt:^2.5 --dev --no-update fi;
+  - if [ "$TRAVIS_PHP_VERSION" == "5.4" ]; then composer require zendframework/zend-crypt:^2.5 --dev --no-update fi;
   - composer update --prefer-source $COMPOSER_FLAGS
 
 script:
