@@ -6,8 +6,15 @@
     "doctrine",
     "extensions",
     "transform",
+    "transformable",
     "encrypt",
-    "hash"
+    "decrypt",
+    "encryptable",
+    "hash",
+    "hashable",
+    "hmac",
+    "crypt",
+    "cryptable"
   ],
   "homepage": "https://www.mediamonks.com/",
   "license": "MIT",
@@ -28,7 +35,8 @@
   "require-dev": {
     "doctrine/orm": ">=2.5.0",
     "doctrine/common": ">=2.5.0",
-    "phpunit/phpunit": "^4.8"
+    "phpunit/phpunit": "^4.8",
+    "zendframework/zend-crypt": "^2.6"
   },
   "suggest": {
     "doctrine/orm": "to use the extensions with the ORM",
