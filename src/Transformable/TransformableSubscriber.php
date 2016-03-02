@@ -4,8 +4,9 @@ namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
-use Gedmo\Mapping\Event\Adapter\ORM;
+use Gedmo\Mapping\Event\AdapterInterface;
 use Gedmo\Mapping\MappedEventSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
@@ -32,7 +33,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @var array
      */
-    protected $entityData = [];
+    protected $entityFieldValues = [];
 
     /**
      * TransformableListener constructor.
@@ -50,10 +51,10 @@ class TransformableSubscriber extends MappedEventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            'onFlush',
-            'postPersist',
-            'postLoad',
-            'postUpdate',
+            Events::onFlush,
+            Events::postPersist,
+            Events::postLoad,
+            Events::postUpdate
         ];
     }
 
@@ -119,13 +120,13 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param ORM $ea
+     * @param AdapterInterface $ea
      * @param ObjectManager $om
      * @param UnitOfWork $uow
      * @param object $entity
      * @param string $method
      */
-    protected function handle(ORM $ea, ObjectManager $om, UnitOfWork $uow, $entity, $method)
+    protected function handle(AdapterInterface $ea, ObjectManager $om, UnitOfWork $uow, $entity, $method)
     {
         $meta   = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
@@ -174,10 +175,11 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getOriginalPlainFieldValue($oid, $field)
     {
-        if(!isset($this->entityData[$oid][$field])) {
+        $data = $this->getFieldData($oid, $field);
+        if(empty($data)) {
             return null;
         }
-        return $this->entityData[$oid][$field][self::TYPE_PLAIN];
+        return $data[self::TYPE_PLAIN];
     }
 
     /**
@@ -187,10 +189,24 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getOriginalTransformedFieldValue($oid, $field)
     {
-        if(!isset($this->entityData[$oid][$field])) {
+        $data = $this->getFieldData($oid, $field);
+        if(empty($data)) {
             return null;
         }
-        return $this->entityData[$oid][$field][self::TYPE_TRANSFORMED];
+        return $data[self::TYPE_TRANSFORMED];
+    }
+
+    /**
+     * @param $oid
+     * @param $field
+     * @return array|null
+     */
+    protected function getFieldData($oid, $field)
+    {
+        if(!isset($this->entityFieldValues[$oid][$field])) {
+            return null;
+        }
+        return $this->entityFieldValues[$oid][$field];
     }
 
     /**
@@ -201,7 +217,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function storeOriginalFieldData($oid, $field, $transformed, $plain)
     {
-        $this->entityData[$oid][$field] = [
+        $this->entityFieldValues[$oid][$field] = [
             self::TYPE_TRANSFORMED => $transformed,
             self::TYPE_PLAIN => $plain
         ];

@@ -7,8 +7,9 @@ use MediaMonks\Doctrine\Mapping\Annotation as MediaMonks;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="tests")
  */
-class User
+class Test
 {
     /**
      * @ORM\Id
@@ -18,10 +19,10 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(name="title", type="string", length=128)
-     * @MediaMonks\Transformable(name="encryptable")
+     * @ORM\Column(type="string", length=128)
+     * @MediaMonks\Transformable(name="noop")
      */
-    private $email;
+    private $value;
 
     /**
      * @return mixed
@@ -34,18 +35,18 @@ class User
     /**
      * @return mixed
      */
-    public function getEmail()
+    public function getValue()
     {
-        return $this->email;
+        return $this->value;
     }
 
     /**
-     * @param mixed $email
-     * @return User
+     * @param mixed $value
+     * @return Test
      */
-    public function setEmail($email)
+    public function setValue($value)
     {
-        $this->email = $email;
+        $this->value = $value;
         return $this;
     }
 

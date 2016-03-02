@@ -3,45 +3,58 @@
 namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventManager;
-use MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer;
+use Doctrine\ORM\EntityManager;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
 use Tool\BaseTestCaseORM;
-use Transformable\Fixture\User;
+use Transformable\Fixture\Test;
 use \Mockery as m;
 
 class TransformableTest extends BaseTestCaseORM
 {
-    const USER = "Transformable\\Fixture\\User";
+    const ENTITY_TEST = "Transformable\\Fixture\\Test";
 
-    const EMAIL = 'robert@mediamonks.com';
+    const VALUE = 'original';
+    const VALUE_TRANSFORMED = 'transformed';
+
+    /**
+     * @var EntityManager
+     */
+    protected $em;
 
     protected function setUp()
     {
-        $transformer = new NoopTransformer();
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\AbstractTransformer');
+        $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
+        $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
 
-        $transformerPool = new TransformerPool();
-        $transformerPool->set('noop', $transformer);
+        $transformerPool = m::mock('MediaMonks\Doctrine\Transformable\Transformer\TransformerPool');
+        $transformerPool->shouldReceive('get')->andReturn($transformer);
 
         $evm = new EventManager();
         $evm->addEventSubscriber(new TransformableSubscriber($transformerPool));
-        $this->getMockSqliteEntityManager($evm);
+        $this->em = $this->getMockSqliteEntityManager($evm);
     }
 
-    public function testValueRemainsEqualAfterFlush()
+    public function testTransformedValueIsStored()
     {
-        $user = new User();
-        $user->setEmail(self::EMAIL);
+        $test = new Test();
+        $test->setValue(self::VALUE);
 
-        $this->em->persist($user);
+        $this->em->persist($test);
         $this->em->flush();
 
-        $this->assertEquals(self::EMAIL, $user->getEmail());
+        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+
+        print_r($dbRow);
+
+        //$this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        //$this->assertEquals(self::VALUE, $test->getValue());
     }
 
     protected function getUsedEntityFixtures()
     {
         return [
-            self::USER,
+            self::ENTITY_TEST,
         ];
     }
 

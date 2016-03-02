@@ -13,5 +13,5 @@ final class Transformable extends Annotation
     /**
      * @var string
      */
-    public $name = 'debug';
+    public $name = 'noop';
 }
