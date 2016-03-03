@@ -51,11 +51,25 @@ class TransformableSubscriber extends MappedEventSubscriber
     public function getSubscribedEvents()
     {
         return [
+            Events::loadClassMetadata,
             Events::onFlush,
             Events::postPersist,
             Events::postLoad,
-            Events::postUpdate
+            Events::postUpdate,
         ];
+    }
+
+    /**
+     * Maps additional metadata for the Entity
+     *
+     * @param EventArgs $eventArgs
+     *
+     * @return void
+     */
+    public function loadClassMetadata(EventArgs $eventArgs)
+    {
+        $ea = $this->getEventAdapter($eventArgs);
+        $this->loadMetadataForObjectClass($ea->getObjectManager(), $eventArgs->getClassMetadata());
     }
 
     /**
@@ -128,7 +142,10 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function handle(AdapterInterface $ea, ObjectManager $om, UnitOfWork $uow, $entity, $method)
     {
-        $meta   = $om->getClassMetadata(get_class($entity));
+        /**
+         * @var \Doctrine\ORM\EntityManager $om
+         */
+        $meta = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
 
         if (isset($config[self::TRANSFORMABLE]) && $config[self::TRANSFORMABLE]) {
@@ -148,7 +165,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     protected function handleField($entity, $method, $column, $meta)
     {
         $field = $column['field'];
-        $oid = spl_object_hash($entity);
+        $oid   = spl_object_hash($entity);
 
         $reflProp = $meta->getReflectionProperty($field);
         $oldValue = $reflProp->getValue($entity);
@@ -176,7 +193,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     protected function getOriginalPlainFieldValue($oid, $field)
     {
         $data = $this->getFieldData($oid, $field);
-        if(empty($data)) {
+        if (empty($data)) {
             return null;
         }
         return $data[self::TYPE_PLAIN];
@@ -190,7 +207,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     protected function getOriginalTransformedFieldValue($oid, $field)
     {
         $data = $this->getFieldData($oid, $field);
-        if(empty($data)) {
+        if (empty($data)) {
             return null;
         }
         return $data[self::TYPE_TRANSFORMED];
@@ -203,7 +220,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getFieldData($oid, $field)
     {
-        if(!isset($this->entityFieldValues[$oid][$field])) {
+        if (!isset($this->entityFieldValues[$oid][$field])) {
             return null;
         }
         return $this->entityFieldValues[$oid][$field];
@@ -219,7 +236,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     {
         $this->entityFieldValues[$oid][$field] = [
             self::TYPE_TRANSFORMED => $transformed,
-            self::TYPE_PLAIN => $plain
+            self::TYPE_PLAIN       => $plain
         ];
     }
 

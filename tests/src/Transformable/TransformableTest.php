@@ -4,7 +4,6 @@ namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
-use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
 use Tool\BaseTestCaseORM;
 use Transformable\Fixture\Test;
 use \Mockery as m;
@@ -45,10 +44,8 @@ class TransformableTest extends BaseTestCaseORM
 
         $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
 
-        print_r($dbRow);
-
-        //$this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
-        //$this->assertEquals(self::VALUE, $test->getValue());
+        $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        $this->assertEquals(self::VALUE, $test->getValue());
     }
 
     protected function getUsedEntityFixtures()
