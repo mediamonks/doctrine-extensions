@@ -5,6 +5,7 @@ namespace MediaMonks\Doctrine\Transformable;
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Gedmo\Mapping\Event\AdapterInterface;
 use Gedmo\Mapping\MappedEventSubscriber;
@@ -157,7 +158,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param $entity
      * @param string $method
      * @param array $column
-     * @param $meta
+     * @param ClassMetadata $meta
      */
     protected function handleField($entity, $method, array $column, $meta)
     {
@@ -175,11 +176,11 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
-     * @param $transformerName
-     * @param $method
-     * @param $value
+     * @param string $oid
+     * @param string $field
+     * @param string $transformerName
+     * @param string $method
+     * @param mixed $value
      * @return mixed
      */
     protected function getNewValue($oid, $field, $transformerName, $method, $value)
@@ -193,9 +194,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $transformerName
-     * @param $method
-     * @param $oldValue
+     * @param string $transformerName
+     * @param string $method
+     * @param mixed $oldValue
      * @return mixed
      */
     protected function performTransformerOperation($transformerName, $method, $oldValue)
@@ -204,9 +205,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
-     * @return null
+     * @param string $oid
+     * @param string $field
+     * @return mixed
      */
     protected function getOriginalPlainFieldValue($oid, $field)
     {
@@ -218,8 +219,8 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
+     * @param string $oid
+     * @param string $field
      * @return mixed
      */
     protected function getOriginalTransformedFieldValue($oid, $field)
@@ -232,8 +233,8 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
+     * @param string $oid
+     * @param string $field
      * @return array|null
      */
     protected function getFieldData($oid, $field)
@@ -245,10 +246,10 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
-     * @param $transformed
-     * @param $plain
+     * @param string $oid
+     * @param string $field
+     * @param mixed $transformed
+     * @param mixed $plain
      */
     protected function storeOriginalFieldData($oid, $field, $transformed, $plain)
     {
@@ -259,7 +260,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return TransformerInterface
      */
     protected function getTransformer($name)
