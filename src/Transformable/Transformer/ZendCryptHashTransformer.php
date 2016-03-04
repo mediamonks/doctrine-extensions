@@ -30,12 +30,28 @@ class ZendCryptHashTransformer extends AbstractTransformer
     }
 
     /**
+     * @return string
+     */
+    public function getAlgorithm()
+    {
+        return $this->algorithm;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBinary()
+    {
+        return $this->binary;
+    }
+
+    /**
      * @param string $value
      * @return string
      */
     public function transform($value)
     {
-        return Hash::compute($this->algorithm, $value, $this->binary);
+        return Hash::compute($this->getAlgorithm(), $value, $this->getBinary());
     }
 }
 

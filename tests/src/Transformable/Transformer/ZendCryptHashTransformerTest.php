@@ -7,6 +7,8 @@ use Zend\Crypt\Hash;
 class ZendCryptHashTransformerTest extends \PHPUnit_Framework_TestCase
 {
     const ALGORITHM = 'sha256';
+    const ALGORITHM_ALTERNATIVE = 'sha1';
+    const VALUE_HEX = 'foobar';
 
     /**
      * @var NoopTransformer
@@ -18,13 +20,31 @@ class ZendCryptHashTransformerTest extends \PHPUnit_Framework_TestCase
         $this->transformer = new ZendCryptHashTransformer(['algorithm' => self::ALGORITHM, 'binary' => false]);
     }
 
-    public function testTransform()
+    public function testChangeAlgorithm()
     {
-        $this->assertEquals(Hash::compute(self::ALGORITHM, ''), $this->transformer->transform(''));
+        $transformer = new ZendCryptHashTransformer(['algorithm' => self::ALGORITHM_ALTERNATIVE]);
+        $this->assertEquals(self::ALGORITHM_ALTERNATIVE, $transformer->getAlgorithm());
     }
 
-    public function testReverseTransform()
+    public function testBinaryDefaultEnabled()
     {
-        $this->assertEquals('', $this->transformer->reverseTransform(''));
+        $transformer = new ZendCryptHashTransformer();
+        $this->assertTrue($transformer->getBinary());
+    }
+
+    public function testDisableBinary()
+    {
+        $transformer = new ZendCryptHashTransformer(['binary' => false]);
+        $this->assertFalse($transformer->getBinary());
+    }
+
+    public function testTransformHex()
+    {
+        $this->assertEquals(Hash::compute(self::ALGORITHM, self::VALUE_HEX), $this->transformer->transform(self::VALUE_HEX));
+    }
+
+    public function testReverseTransformHex()
+    {
+        $this->assertEquals(self::VALUE_HEX, $this->transformer->reverseTransform(self::VALUE_HEX));
     }
 }

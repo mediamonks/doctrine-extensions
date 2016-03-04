@@ -60,10 +60,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * Maps additional metadata for the Entity
-     *
      * @param EventArgs $eventArgs
-     *
      * @return void
      */
     public function loadClassMetadata(EventArgs $eventArgs)

@@ -4,6 +4,7 @@ namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Events;
 use Tool\BaseTestCaseORM;
 use Transformable\Fixture\Test;
 use \Mockery as m;
@@ -22,6 +23,16 @@ class TransformableTest extends BaseTestCaseORM
 
     protected function setUp()
     {
+        $evm = new EventManager();
+        $evm->addEventSubscriber($this->getSubscriber());
+        $this->em = $this->getMockSqliteEntityManager($evm);
+    }
+
+    /**
+     * @return TransformableSubscriber
+     */
+    protected function getSubscriber()
+    {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\AbstractTransformer');
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
@@ -29,9 +40,18 @@ class TransformableTest extends BaseTestCaseORM
         $transformerPool = m::mock('MediaMonks\Doctrine\Transformable\Transformer\TransformerPool');
         $transformerPool->shouldReceive('get')->andReturn($transformer);
 
-        $evm = new EventManager();
-        $evm->addEventSubscriber(new TransformableSubscriber($transformerPool));
-        $this->em = $this->getMockSqliteEntityManager($evm);
+        return new TransformableSubscriber($transformerPool);
+    }
+
+    public function testGetSubscribedEvents()
+    {
+        $subscribedEvents = $this->getSubscriber()->getSubscribedEvents();
+
+        $this->assertContains(Events::loadClassMetadata, $subscribedEvents);
+        $this->assertContains(Events::onFlush, $subscribedEvents);
+        $this->assertContains(Events::postPersist, $subscribedEvents);
+        $this->assertContains(Events::postLoad, $subscribedEvents);
+        $this->assertContains(Events::postUpdate, $subscribedEvents);
     }
 
     public function testTransformedValueIsStored()
@@ -54,5 +74,4 @@ class TransformableTest extends BaseTestCaseORM
             self::ENTITY_TEST,
         ];
     }
-
 }

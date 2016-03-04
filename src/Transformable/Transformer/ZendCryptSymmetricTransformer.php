@@ -38,6 +38,22 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
     }
 
     /**
+     * @return bool
+     */
+    public function getBinary()
+    {
+        return $this->binary;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getRequireStrongRandomGenerator()
+    {
+        return $this->requireStrongRandomGenerator;
+    }
+
+    /**
      * @param string $value
      * @return string
      */
@@ -45,7 +61,7 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
     {
         $this->updateSalt();
         $value = $this->crypt->encrypt($value);
-        if(!$this->binary) {
+        if(!$this->getBinary()) {
             $value = bin2hex($value);
         }
         return $value;
@@ -57,7 +73,7 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
      */
     public function reverseTransform($value)
     {
-        if(!$this->binary) {
+        if(!$this->getBinary()) {
             $value = hex2bin($value);
         }
         return $this->crypt->decrypt($value);
@@ -68,7 +84,7 @@ class ZendCryptSymmetricTransformer extends AbstractTransformer
      */
     protected function updateSalt()
     {
-        $this->crypt->setSalt(Rand::getBytes($this->crypt->getSaltSize(), $this->requireStrongRandomGenerator));
+        $this->crypt->setSalt(Rand::getBytes($this->crypt->getSaltSize(), $this->getRequireStrongRandomGenerator()));
     }
 }
 

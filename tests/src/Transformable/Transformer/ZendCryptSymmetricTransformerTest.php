@@ -6,37 +6,70 @@ use Mockery as m;
 
 class ZendCryptSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    const VALUE = 'foobar';
-    const VALUE_ENCRYPTED = 'foobar_encrypted';
+    const VALUE_HEX = 'foobar';
+    const VALUE_HEX_ENCRYPTED = 'foobar_encrypted';
 
-    /**
-     * @var NoopTransformer
-     */
-    protected $transformer;
+    const VALUE_BINARY = 'foobar_binary';
+    const VALUE_BINARY_ENCRYPTED = 'foobar_binary_encrypted';
 
-    protected function setUp()
+    protected function getMockCrypt($encrypted, $decrypted)
     {
         $crypt = m::mock('Zend\Crypt\Symmetric\Mcrypt');
-        $crypt->shouldReceive('encrypt')->andReturn(self::VALUE_ENCRYPTED);
-        $crypt->shouldReceive('decrypt')->andReturn(self::VALUE);
         $crypt->shouldReceive('getSaltSize')->andReturn(0);
         $crypt->shouldReceive('setSalt')->andReturnSelf();
-
-        $this->transformer = new ZendCryptSymmetricTransformer($crypt);
+        $crypt->shouldReceive('encrypt')->andReturn($encrypted);
+        $crypt->shouldReceive('decrypt')->andReturn($decrypted);
+        return $crypt;
     }
 
-    public function testTransform()
+    protected function getTransformerHex()
     {
-        $this->assertEquals(self::VALUE_ENCRYPTED, $this->transformer->transform(self::VALUE));
+        return new ZendCryptSymmetricTransformer($this->getMockCrypt(self::VALUE_HEX_ENCRYPTED, self::VALUE_HEX), ['binary' => false]);
     }
 
-    public function testReverseTransform()
+    protected function getTransformerBinary()
     {
-        $this->assertEquals(self::VALUE, $this->transformer->reverseTransform(self::VALUE_ENCRYPTED));
+        return new ZendCryptSymmetricTransformer($this->getMockCrypt(self::VALUE_BINARY_ENCRYPTED, self::VALUE_BINARY));
     }
 
-    public function testTransformReverseTransform()
+    public function testBinaryDefaultEnabled()
     {
-        $this->assertEquals(self::VALUE, $this->transformer->reverseTransform($this->transformer->transform(self::VALUE)));
+        $this->assertTrue($this->getTransformerBinary()->getBinary());
+    }
+
+    public function testDisableBinary()
+    {
+        $this->assertFalse($this->getTransformerHex()->getBinary());
+    }
+
+    public function testTransformHex()
+    {
+        $this->assertEquals(bin2hex(self::VALUE_HEX_ENCRYPTED), $this->getTransformerHex()->transform(self::VALUE_HEX));
+    }
+
+    public function testReverseTransformHex()
+    {
+        $this->assertEquals(self::VALUE_HEX, $this->getTransformerHex()->reverseTransform(bin2hex(self::VALUE_HEX_ENCRYPTED)));
+    }
+
+    public function testTransformReverseTransformHex()
+    {
+        $transformer = $this->getTransformerHex();
+        $this->assertEquals(self::VALUE_HEX, $transformer->reverseTransform($transformer->transform(self::VALUE_HEX)));
+    }
+
+    public function testTransformBinary()
+    {
+        $this->assertEquals(self::VALUE_BINARY_ENCRYPTED, $this->getTransformerBinary()->transform(self::VALUE_BINARY));
+    }
+
+    public function testReverseTransformBinary()
+    {
+        $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform(self::VALUE_BINARY_ENCRYPTED));
+    }
+
+    public function testTransformReverseTransformBinary()
+    {
+        $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform($this->getTransformerBinary()->transform(self::VALUE_BINARY)));
     }
 }
