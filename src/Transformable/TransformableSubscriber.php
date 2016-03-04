@@ -155,11 +155,11 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param $entity
-     * @param $method
-     * @param $column
+     * @param string $method
+     * @param array $column
      * @param $meta
      */
-    protected function handleField($entity, $method, $column, $meta)
+    protected function handleField($entity, $method, array $column, $meta)
     {
         $field = $column['field'];
         $oid   = spl_object_hash($entity);
