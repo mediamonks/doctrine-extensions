@@ -17,11 +17,14 @@ This extension uses transform and reverseTransform methods to convert data to an
 
 The field's value will only be transformed when the value changed which also makes it possible to implement only a transform function for one way transformations like hashing.
 
-Currently these adapters are provided and require the [Zend\Crypt](https://packagist.org/packages/zendframework/zend-crypt) package to work.
+Currently these adapters are provided:
 
-- ZendCryptHashTransformer - Hashes the value
-- ZendCryptHmacTransformer - Hashes the value with a key
-- ZendCryptSymmetricTransformer - Encrypts/Decrypts the value
+- NoopTransformer - Used for testing purposes
+- ZendCryptHashTransformer* - Hashes the value
+- ZendCryptHmacTransformer* - Hashes the value with a key
+- ZendCryptSymmetricTransformer* - Encrypts/Decrypts the value
+
+* Requires [Zend\Crypt](https://packagist.org/packages/zendframework/zend-crypt)
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 

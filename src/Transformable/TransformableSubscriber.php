@@ -166,20 +166,41 @@ class TransformableSubscriber extends MappedEventSubscriber
 
         $reflProp = $meta->getReflectionProperty($field);
         $oldValue = $reflProp->getValue($entity);
-
-        if ($method === self::FUNCTION_TRANSFORM
-            && $this->getOriginalPlainFieldValue($oid, $field) === $oldValue
-        ) {
-            $newValue = $this->getOriginalTransformedFieldValue($oid, $field);
-        } else {
-            $newValue = $this->getTransformer($column['name'])->$method($oldValue);
-        }
-
+        $newValue = $this->getNewValue($oid, $field, $column['name'], $method, $oldValue);
         $reflProp->setValue($entity, $newValue);
 
         if ($method === self::FUNCTION_REVERSE_TRANSFORM) {
             $this->storeOriginalFieldData($oid, $field, $oldValue, $newValue);
         }
+    }
+
+    /**
+     * @param $oid
+     * @param $field
+     * @param $transformerName
+     * @param $method
+     * @param $value
+     * @return mixed
+     */
+    protected function getNewValue($oid, $field, $transformerName, $method, $value)
+    {
+        if ($method === self::FUNCTION_TRANSFORM
+            && $this->getOriginalPlainFieldValue($oid, $field) === $value
+        ) {
+            return $this->getOriginalTransformedFieldValue($oid, $field);
+        }
+        return $this->performTransformerOperation($transformerName, $method, $value);
+    }
+
+    /**
+     * @param $transformerName
+     * @param $method
+     * @param $oldValue
+     * @return mixed
+     */
+    protected function performTransformerOperation($transformerName, $method, $oldValue)
+    {
+        return $this->getTransformer($transformerName)->$method($oldValue);
     }
 
     /**
