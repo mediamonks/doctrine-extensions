@@ -205,9 +205,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param $oid
-     * @param $field
-     * @param $type
+     * @param string $oid
+     * @param string $field
+     * @param string $type
      * @return mixed|null
      */
     protected function getEntityFieldValue($oid, $field, $type)
