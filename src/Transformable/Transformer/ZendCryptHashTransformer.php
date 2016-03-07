@@ -4,7 +4,7 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use Zend\Crypt\Hash;
 
-class ZendCryptHashTransformer extends AbstractTransformer
+class ZendCryptHashTransformer implements TransformerInterface
 {
     /**
      * @var string
@@ -52,6 +52,15 @@ class ZendCryptHashTransformer extends AbstractTransformer
     public function transform($value)
     {
         return Hash::compute($this->getAlgorithm(), $value, $this->getBinary());
+    }
+
+    /**
+     * @param mixed $value
+     * @return string
+     */
+    public function reverseTransform($value)
+    {
+        return $value;
     }
 }
 

@@ -2,6 +2,8 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use \Mockery as m;
+
 class TransformerPoolTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -22,7 +24,7 @@ class TransformerPoolTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->transformerPool = new TransformerPool();
-        $this->transformer = new NoopTransformer();
+        $this->transformer = $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface');
 
         $this->transformerPool->set($this->transformerKey, $this->transformer);
     }

@@ -19,7 +19,6 @@ The field's value will only be transformed when the value changed which also mak
 
 Currently these adapters are provided:
 
-- NoopTransformer - Used for testing purposes
 - ZendCryptHashTransformer * - Hashes the value
 - ZendCryptHmacTransformer * - Hashes the value with a key
 - ZendCryptSymmetricTransformer * - Encrypts/Decrypts the value

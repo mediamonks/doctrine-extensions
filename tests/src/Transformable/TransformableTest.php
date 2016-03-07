@@ -16,6 +16,9 @@ class TransformableTest extends BaseTestCaseORM
     const VALUE = 'original';
     const VALUE_TRANSFORMED = 'transformed';
 
+    const VALUE_2 = 'original_updated';
+    const VALUE_2_TRANSFORMED = 'transformed_updated';
+
     /**
      * @var EntityManager
      */
@@ -33,7 +36,7 @@ class TransformableTest extends BaseTestCaseORM
      */
     protected function getSubscriber()
     {
-        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\AbstractTransformer');
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer');
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
 
@@ -65,6 +68,14 @@ class TransformableTest extends BaseTestCaseORM
         $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
 
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        $this->assertEquals(self::VALUE, $test->getValue());
+    }
+
+    public function testReverseTransformOfAlreadyPresentValue()
+    {
+        $this->em->getConnection()->insert('tests', ['id' => 1, 'value' => self::VALUE_TRANSFORMED]);
+
+        $test = $this->em->find('Transformable\Fixture\Test', 1);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 

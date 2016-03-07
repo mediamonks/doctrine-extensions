@@ -5,7 +5,7 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 use Zend\Crypt\Symmetric\SymmetricInterface;
 use Zend\Math\Rand;
 
-class ZendCryptSymmetricTransformer extends AbstractTransformer
+class ZendCryptSymmetricTransformer implements TransformerInterface
 {
     /**
      * @var SymmetricInterface

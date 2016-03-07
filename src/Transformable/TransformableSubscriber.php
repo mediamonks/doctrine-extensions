@@ -186,9 +186,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     protected function getNewValue($oid, $field, $transformerName, $method, $value)
     {
         if ($method === self::FUNCTION_TRANSFORM
-            && $this->getOriginalPlainFieldValue($oid, $field) === $value
+            && $this->getEntityFieldValue($oid, $field, self::TYPE_PLAIN) === $value
         ) {
-            return $this->getOriginalTransformedFieldValue($oid, $field);
+            return $this->getEntityFieldValue($oid, $field, self::TYPE_TRANSFORMED);
         }
         return $this->performTransformerOperation($transformerName, $method, $value);
     }
@@ -205,44 +205,17 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param string $oid
-     * @param string $field
-     * @return mixed
+     * @param $oid
+     * @param $field
+     * @param $type
+     * @return mixed|null
      */
-    protected function getOriginalPlainFieldValue($oid, $field)
+    protected function getEntityFieldValue($oid, $field, $type)
     {
-        $data = $this->getFieldData($oid, $field);
-        if (empty($data)) {
+        if(!isset($this->entityFieldValues[$oid][$field])) {
             return null;
         }
-        return $data[self::TYPE_PLAIN];
-    }
-
-    /**
-     * @param string $oid
-     * @param string $field
-     * @return mixed
-     */
-    protected function getOriginalTransformedFieldValue($oid, $field)
-    {
-        $data = $this->getFieldData($oid, $field);
-        if (empty($data)) {
-            return null;
-        }
-        return $data[self::TYPE_TRANSFORMED];
-    }
-
-    /**
-     * @param string $oid
-     * @param string $field
-     * @return array|null
-     */
-    protected function getFieldData($oid, $field)
-    {
-        if (!isset($this->entityFieldValues[$oid][$field])) {
-            return null;
-        }
-        return $this->entityFieldValues[$oid][$field];
+        return $this->entityFieldValues[$oid][$field][$type];
     }
 
     /**
