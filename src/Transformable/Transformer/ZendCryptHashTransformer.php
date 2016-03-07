@@ -29,10 +29,10 @@ class ZendCryptHashTransformer implements TransformerInterface
      */
     protected function setOptions(array $options)
     {
-        if(isset($options['algorithm'])) {
+        if(array_key_exists('algorithm', $options)) {
             $this->algorithm = $options['algorithm'];
         }
-        if(isset($options['binary'])) {
+        if(array_key_exists('binary', $options)) {
             $this->binary = $options['binary'];
         }
     }

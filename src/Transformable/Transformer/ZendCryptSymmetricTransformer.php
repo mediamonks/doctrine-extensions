@@ -37,10 +37,10 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
      */
     protected function setOptions(array $options)
     {
-        if(isset($options['binary'])) {
+        if(array_key_exists('binary', $options)) {
             $this->binary = $options['binary'];
         }
-        if(isset($options['requireStrongRandomGenerator'])) {
+        if(array_key_exists('requireStrongRandomGenerator', $options)) {
             $this->requireStrongRandomGenerator = $options['requireStrongRandomGenerator'];
         }
     }
