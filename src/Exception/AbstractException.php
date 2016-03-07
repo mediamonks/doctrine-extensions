@@ -1,8 +1,7 @@
 <?php
 
-namespace MediaMonks\Doctrine;
+namespace MediaMonks\Doctrine\Exception;
 
-class AbstractDriverException extends \Exception
+class AbstractException extends \Exception
 {
-    
 }

@@ -50,8 +50,7 @@ class ZendCryptSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
 
     public function testDontRequireStrongRandomGenerator()
     {
-        $transformer = new ZendCryptSymmetricTransformer(
-            $this->getMockCrypt(self::VALUE_HEX_ENCRYPTED, self::VALUE_HEX), ['requireStrongRandomGenerator' => false]);
+        $transformer = new ZendCryptSymmetricTransformer($this->getMockCrypt(self::VALUE_HEX_ENCRYPTED, self::VALUE_HEX), ['requireStrongRandomGenerator' => false]);
         $this->assertFalse($transformer->getRequireStrongRandomGenerator());
     }
 

@@ -2,7 +2,7 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use MediaMonks\Doctrine\InvalidArgumentException;
+use MediaMonks\Doctrine\Exception\InvalidArgumentException;
 
 class TransformerPool implements \ArrayAccess
 {
@@ -60,9 +60,6 @@ class TransformerPool implements \ArrayAccess
      */
     public function offsetSet($key, $transformer)
     {
-        if(!$transformer instanceof TransformerInterface) {
-            throw new InvalidArgumentException('Transformer should be an instance of TransformerInterface');
-        }
         $this->transformers[$key] = $transformer;
         return $this;
     }
