@@ -19,10 +19,15 @@ class Test
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=128)
-     * @MediaMonks\Transformable(name="noop")
+     * @ORM\Column(type="string",)
+     * @MediaMonks\Transformable(name="mocked")
      */
     private $value;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $updated = false;
 
     /**
      * @return mixed
@@ -50,4 +55,21 @@ class Test
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @param mixed $updated
+     * @return Test
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+        return $this;
+    }
 }
