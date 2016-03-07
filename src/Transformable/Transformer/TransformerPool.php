@@ -2,6 +2,8 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use MediaMonks\Doctrine\InvalidArgumentException;
+
 class TransformerPool implements \ArrayAccess
 {
     /**
@@ -10,69 +12,69 @@ class TransformerPool implements \ArrayAccess
     protected $transformers = [];
 
     /**
-     * @param $key
+     * @param $name
      * @return TransformerInterface|null
      */
-    public function get($key)
+    public function get($name)
     {
-        return $this->offsetGet($key);
+        return $this->offsetGet($name);
     }
 
     /**
-     * @param $key
-     * @param TransformerInterface $value
+     * @param $name
+     * @param TransformerInterface $transformer
      * @return $this
      */
-    public function set($key, TransformerInterface $value)
+    public function set($name, TransformerInterface $transformer)
     {
-        return $this->offsetSet($key, $value);
+        return $this->offsetSet($name, $transformer);
     }
 
     /**
-     * @param mixed $key
+     * @param mixed $name
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($name)
     {
-        return array_key_exists($key, $this->transformers);
+        return array_key_exists($name, $this->transformers);
     }
 
     /**
-     * @param mixed $key
+     * @param mixed $name
      * @return TransformerInterface|null
      * @throws \Exception
      */
-    public function offsetGet($key)
+    public function offsetGet($name)
     {
-        if(!$this->offsetExists($key)) {
-            throw new \Exception(sprintf('Transformer with name "%s" is not set', $key));
+        if(!$this->offsetExists($name)) {
+            throw new InvalidArgumentException(sprintf('Transformer with name "%s" is not set', $name));
         }
-        return $this->transformers[$key];
+        return $this->transformers[$name];
     }
 
     /**
      * @param mixed $key
-     * @param mixed $value
+     * @param mixed $transformer
      * @throws \Exception
      * @return $this
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $transformer)
     {
-        if(!$value instanceof TransformerInterface) {
-            throw new \Exception('Value should be an instnce of TransformerInterface');
+        if(!$transformer instanceof TransformerInterface) {
+            throw new InvalidArgumentException('Transformer should be an instance of TransformerInterface');
         }
-        $this->transformers[$key] = $value;
+        $this->transformers[$key] = $transformer;
         return $this;
     }
 
     /**
-     * @param mixed $key
+     * @param mixed $name
      * @return $this
      */
-    public function offsetUnset($key)
+    public function offsetUnset($name)
     {
-        if($this->offsetExists($key)) {
-            unset($this->transformers[$key]);
+        if($this->offsetExists($name)) {
+            unset($this->transformers[$name]);
         }
         return $this;
     }
