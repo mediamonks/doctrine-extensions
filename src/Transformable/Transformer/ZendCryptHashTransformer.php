@@ -21,6 +21,14 @@ class ZendCryptHashTransformer implements TransformerInterface
      */
     public function __construct(array $options = [])
     {
+        $this->setOptions($options);
+    }
+
+    /**
+     * @param array $options
+     */
+    protected function setOptions(array $options)
+    {
         if(isset($options['algorithm'])) {
             $this->algorithm = $options['algorithm'];
         }

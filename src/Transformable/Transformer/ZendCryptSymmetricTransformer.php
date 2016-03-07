@@ -29,6 +29,14 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
     public function __construct(SymmetricInterface $crypt, array $options = [])
     {
         $this->crypt = $crypt;
+        $this->setOptions($options);
+    }
+
+    /**
+     * @param array $options
+     */
+    protected function setOptions(array $options)
+    {
         if(isset($options['binary'])) {
             $this->binary = $options['binary'];
         }
