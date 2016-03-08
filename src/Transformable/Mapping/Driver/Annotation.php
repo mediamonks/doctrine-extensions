@@ -3,6 +3,7 @@
 namespace MediaMonks\Doctrine\Transformable\Mapping\Driver;
 
 use Gedmo\Mapping\Driver\AbstractAnnotationDriver;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * @author Robert Slootjes <robert@mediamonks.com>
@@ -28,11 +29,11 @@ class Annotation extends AbstractAnnotationDriver
     }
 
     /**
-     * @param $meta
-     * @param $property
+     * @param ClassMetadata $meta
+     * @param \ReflectionProperty $property
      * @return bool
      */
-    protected function isInherited($meta, $property)
+    protected function isInherited(ClassMetadata $meta, \ReflectionProperty $property)
     {
         return ($meta->isMappedSuperclass && !$property->isPrivate()
             || $meta->isInheritedField($property->name)
