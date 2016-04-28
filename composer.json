@@ -1,7 +1,7 @@
 {
   "name": "mediamonks/doctrine-extensions",
   "type": "library",
-  "description": "Doctrine2 behavioral extensions",
+  "description": "Doctrine2 behavioral extensions which allows to transform (encrypt, decrypt, hash) your data automatically",
   "keywords": [
     "doctrine",
     "extensions",
