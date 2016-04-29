@@ -190,6 +190,7 @@ class TransformableSubscriber extends MappedEventSubscriber
         ) {
             return $this->getEntityFieldValue($oid, $field, self::TYPE_TRANSFORMED);
         }
+
         return $this->performTransformerOperation($transformerName, $method, $value);
     }
 
@@ -201,6 +202,10 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function performTransformerOperation($transformerName, $method, $oldValue)
     {
+        if (!isset($oldValue)) {
+            return null;
+        }
+
         return $this->getTransformer($transformerName)->$method($oldValue);
     }
 
@@ -212,9 +217,10 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getEntityFieldValue($oid, $field, $type)
     {
-        if(!isset($this->entityFieldValues[$oid][$field])) {
+        if (!isset($this->entityFieldValues[$oid][$field])) {
             return null;
         }
+
         return $this->entityFieldValues[$oid][$field][$type];
     }
 
