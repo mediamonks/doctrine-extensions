@@ -185,10 +185,10 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getNewValue($oid, $field, $transformerName, $method, $value)
     {
-        if ($method === self::FUNCTION_TRANSFORM
-            && $this->getEntityFieldValue($oid, $field, self::TYPE_PLAIN) === $value
+        if ($method === self::FUNCTION_TRANSFORM &&
+            $this->hasEntityFieldValue($oid, $field, self::TYPE_PLAIN, $value)
         ) {
-            return $this->getEntityFieldValue($oid, $field, self::TYPE_TRANSFORMED);
+            return $this->entityFieldValues[$oid][$field][self::TYPE_TRANSFORMED];
         }
 
         return $this->performTransformerOperation($transformerName, $method, $value);
@@ -202,26 +202,27 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function performTransformerOperation($transformerName, $method, $oldValue)
     {
-        if (!isset($oldValue)) {
-            return null;
-        }
-
         return $this->getTransformer($transformerName)->$method($oldValue);
     }
 
     /**
-     * @param string $oid
-     * @param string $field
-     * @param string $type
-     * @return mixed|null
+     * @param $oid
+     * @param $field
+     * @param $type
+     * @param $value
+     * @return bool
      */
-    protected function getEntityFieldValue($oid, $field, $type)
+    protected function hasEntityFieldValue($oid, $field, $type, $value)
     {
-        if (!isset($this->entityFieldValues[$oid][$field])) {
-            return null;
+        if (array_key_exists($oid, $this->entityFieldValues) &&
+            array_key_exists($field, $this->entityFieldValues[$oid]) &&
+            array_key_exists($type, $this->entityFieldValues[$oid][$field]) &&
+            $this->entityFieldValues[$oid][$field][$type] === $value
+        ) {
+            return true;
         }
 
-        return $this->entityFieldValues[$oid][$field][$type];
+        return false;
     }
 
     /**
@@ -234,7 +235,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     {
         $this->entityFieldValues[$oid][$field] = [
             self::TYPE_TRANSFORMED => $transformed,
-            self::TYPE_PLAIN       => $plain
+            self::TYPE_PLAIN       => $plain,
         ];
     }
 

@@ -37,10 +37,10 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
      */
     protected function setOptions(array $options)
     {
-        if(array_key_exists('binary', $options)) {
+        if (array_key_exists('binary', $options)) {
             $this->binary = $options['binary'];
         }
-        if(array_key_exists('requireStrongRandomGenerator', $options)) {
+        if (array_key_exists('requireStrongRandomGenerator', $options)) {
             $this->requireStrongRandomGenerator = $options['requireStrongRandomGenerator'];
         }
     }
@@ -67,11 +67,17 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
      */
     public function transform($value)
     {
+        if ($value === null) {
+            return null;
+        }
+
         $this->updateSalt();
         $value = $this->crypt->encrypt($value);
-        if(!$this->getBinary()) {
+
+        if (!$this->getBinary()) {
             $value = bin2hex($value);
         }
+
         return $value;
     }
 
@@ -81,9 +87,14 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
      */
     public function reverseTransform($value)
     {
-        if(!$this->getBinary()) {
+        if ($value === null) {
+            return null;
+        }
+
+        if (!$this->getBinary()) {
             $value = hex2bin($value);
         }
+
         return $this->crypt->decrypt($value);
     }
 
