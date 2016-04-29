@@ -185,12 +185,11 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getNewValue($oid, $field, $transformerName, $method, $value)
     {
-        if ($method === self::FUNCTION_TRANSFORM &&
-            $this->hasEntityFieldValue($oid, $field, self::TYPE_PLAIN, $value)
+        if ($method === self::FUNCTION_TRANSFORM
+            && $this->getEntityFieldValue($oid, $field, self::TYPE_PLAIN) === $value
         ) {
-            return $this->entityFieldValues[$oid][$field][self::TYPE_TRANSFORMED];
+            return $this->getEntityFieldValue($oid, $field, self::TYPE_TRANSFORMED);
         }
-
         return $this->performTransformerOperation($transformerName, $method, $value);
     }
 
@@ -209,20 +208,14 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param string $oid
      * @param string $field
      * @param string $type
-     * @param mixed $value
-     * @return bool
+     * @return mixed|null
      */
-    protected function hasEntityFieldValue($oid, $field, $type, $value)
+    protected function getEntityFieldValue($oid, $field, $type)
     {
-        if (array_key_exists($oid, $this->entityFieldValues) &&
-            array_key_exists($field, $this->entityFieldValues[$oid]) &&
-            array_key_exists($type, $this->entityFieldValues[$oid][$field]) &&
-            $this->entityFieldValues[$oid][$field][$type] === $value
-        ) {
-            return true;
+        if(!isset($this->entityFieldValues[$oid][$field])) {
+            return null;
         }
-
-        return false;
+        return $this->entityFieldValues[$oid][$field][$type];
     }
 
     /**
@@ -235,7 +228,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     {
         $this->entityFieldValues[$oid][$field] = [
             self::TYPE_TRANSFORMED => $transformed,
-            self::TYPE_PLAIN       => $plain,
+            self::TYPE_PLAIN       => $plain
         ];
     }
 
