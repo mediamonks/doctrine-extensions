@@ -67,10 +67,6 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
      */
     public function transform($value)
     {
-        if ($value === null) {
-            return null;
-        }
-
         $this->updateSalt();
         $value = $this->crypt->encrypt($value);
 

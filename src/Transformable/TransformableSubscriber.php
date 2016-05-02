@@ -143,7 +143,7 @@ class TransformableSubscriber extends MappedEventSubscriber
         /**
          * @var \Doctrine\ORM\EntityManager $om
          */
-        $meta = $om->getClassMetadata(get_class($entity));
+        $meta   = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
 
         if (isset($config[self::TRANSFORMABLE]) && $config[self::TRANSFORMABLE]) {
@@ -201,6 +201,9 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function performTransformerOperation($transformerName, $method, $oldValue)
     {
+        if (is_null($oldValue)) {
+            return null;
+        }
         return $this->getTransformer($transformerName)->$method($oldValue);
     }
 
@@ -212,7 +215,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function getEntityFieldValue($oid, $field, $type)
     {
-        if(!isset($this->entityFieldValues[$oid][$field])) {
+        if (!isset($this->entityFieldValues[$oid][$field])) {
             return null;
         }
         return $this->entityFieldValues[$oid][$field][$type];

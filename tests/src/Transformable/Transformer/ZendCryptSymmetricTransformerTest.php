@@ -57,13 +57,11 @@ class ZendCryptSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
     public function testTransformHex()
     {
         $this->assertEquals(bin2hex(self::VALUE_HEX_ENCRYPTED), $this->getTransformerHex()->transform(self::VALUE_HEX));
-        $this->assertEquals(null, $this->getTransformerHex()->transform(null));
     }
 
     public function testReverseTransformHex()
     {
         $this->assertEquals(self::VALUE_HEX, $this->getTransformerHex()->reverseTransform(bin2hex(self::VALUE_HEX_ENCRYPTED)));
-        $this->assertEquals(null, $this->getTransformerHex()->reverseTransform(null));
     }
 
     public function testTransformReverseTransformHex()

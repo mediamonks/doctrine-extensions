@@ -83,6 +83,21 @@ class TransformableTest extends BaseTestCaseORM
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
+    public function testSupportsNull()
+    {
+        $this->setUpEntityManager();
+
+        $test = new Test();
+
+        $this->em->persist($test);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+
+        $this->assertEquals(null, $dbRow['value']);
+        $this->assertNull($test->getValue());
+    }
+
     public function testTransformAfterUpdate()
     {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer');
@@ -136,6 +151,8 @@ class TransformableTest extends BaseTestCaseORM
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
+
+
 
     protected function getUsedEntityFixtures()
     {
