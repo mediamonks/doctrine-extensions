@@ -84,7 +84,7 @@ class TransformableTest extends BaseTestCaseORM
 
         $this->em->clear();
 
-        $test = $this->em->find(Test::class, 1);
+        $test = $this->em->find('Transformable\Fixture\Test', 1);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
