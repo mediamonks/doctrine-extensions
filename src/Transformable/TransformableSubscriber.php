@@ -166,13 +166,27 @@ class TransformableSubscriber extends MappedEventSubscriber
         $oid   = spl_object_hash($entity);
 
         $reflProp = $meta->getReflectionProperty($field);
-        $oldValue = $reflProp->getValue($entity);
+        $oldValue = $this->getEntityValue($reflProp, $entity);
         $newValue = $this->getNewValue($oid, $field, $column['name'], $method, $oldValue);
         $reflProp->setValue($entity, $newValue);
 
         if ($method === self::FUNCTION_REVERSE_TRANSFORM) {
             $this->storeOriginalFieldData($oid, $field, $oldValue, $newValue);
         }
+    }
+
+    /**
+     * @param $reflProp
+     * @param $entity
+     * @return string
+     */
+    protected function getEntityValue($reflProp, $entity)
+    {
+        $value = $reflProp->getValue($entity);
+        if(is_resource($value)) {
+            $value = stream_get_contents($value);
+        }
+        return $value;
     }
 
     /**

@@ -81,6 +81,11 @@ class TransformableTest extends BaseTestCaseORM
 
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
         $this->assertEquals(self::VALUE, $test->getValue());
+
+        $this->em->clear();
+
+        $test = $this->em->find(Test::class, 1);
+        $this->assertEquals(self::VALUE, $test->getValue());
     }
 
     public function testSupportsNull()
