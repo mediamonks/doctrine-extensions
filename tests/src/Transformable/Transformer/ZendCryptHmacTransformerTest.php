@@ -12,7 +12,7 @@ class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
     const VALUE = 'foobar';
 
     /**
-     * @var NoopTransformer
+     * @var TransformerInterface
      */
     protected $transformer;
 

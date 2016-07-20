@@ -38,11 +38,13 @@
     "phpunit/phpunit": "^4.8",
     "zendframework/zend-crypt": "^2.6",
     "mockery/mockery": "^0.9.4",
-    "codeclimate/php-test-reporter": "^0.3.0"
+    "codeclimate/php-test-reporter": "^0.3.0",
+    "defuse/php-encryption": "^2.0"
   },
   "suggest": {
     "doctrine/orm": "to use the extensions with the ORM",
-    "zendframework/zend-crypt": "to use the crypt transformers"
+    "defuse/php-encryption": "to use the Defuse Crypto transformers",
+    "zendframework/zend-crypt": "to use the Zend Crypt transformers"
   },
   "autoload": {
     "psr-4": {

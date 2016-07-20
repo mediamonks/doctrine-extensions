@@ -19,11 +19,10 @@ The field's value will only be transformed when the value changed which also mak
 
 Currently these adapters are provided:
 
-- ZendCryptHashTransformer * - Hashes the value
-- ZendCryptHmacTransformer * - Hashes the value with a key
-- ZendCryptSymmetricTransformer * - Encrypts/Decrypts the value
-
-Transformers marked with * require [Zend\Crypt](https://packagist.org/packages/zendframework/zend-crypt)
+- DefuseCryptoEncryptKeyTransformer - Encrypt/decrypts the value
+- ZendCryptHashTransformer - Hashes the value
+- ZendCryptHmacTransformer - Hashes the value with a key
+- ZendCryptSymmetricTransformer - Encrypts/decrypts the value
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 

@@ -11,7 +11,7 @@ class ZendCryptHashTransformerTest extends \PHPUnit_Framework_TestCase
     const VALUE_HEX = 'foobar';
 
     /**
-     * @var NoopTransformer
+     * @var TransformerInterface
      */
     protected $transformer;
 

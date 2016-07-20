@@ -7,14 +7,19 @@ Configure services:
 
     # app/config/parameters.yml
     parameters:
-        encryption_key: a_key_stronger_than_this_example
+        defuse_encryption_key: def000008728e..........3672cb0efd
+        zend_encryption_key: a_key_stronger_than_this_example
         hmac_key: a_key_stronger_than_this_example
 
     services:
+        mediamonks.doctrine.transformable.transformer.defuse_encrypt_key:
+            class: MediaMonks\Doctrine\Transformable\Transformer\DefuseCryptoEncryptKeyTransformer
+            arguments: ["@defuse_encryption_key"]
+
         zend.crypt.symmetric_encrypter:
             class: Zend\Crypt\Symmetric\Mcrypt
             calls:
-                - [setKey, [%encryption_key%]]
+                - [setKey, [%zend_encryption_key%]]
 
         mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric:
             class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptSymmetricTransformer
@@ -30,9 +35,10 @@ Configure services:
         mediamonks.doctrine.transformable.transformer_pool:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
             calls:
-                - [set, ['encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
-                - [set, ['hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
-                - [set, ['hmac', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hmac"]]
+                - [set, ['defuse_encrypt_key', "@mediamonks.doctrine.transformable.transformer.defuse_encrypt_key"]]
+                - [set, ['zend_encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
+                - [set, ['zend_hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
+                - [set, ['zend_hmac', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hmac"]]
 
         doctrine.transformable.subscriber:
             class: MediaMonks\Doctrine\Transformable\TransformableSubscriber
@@ -59,12 +65,12 @@ Configure entity:
     {
         /**
          * @ORM\Column(type="blob")
-         * @MediaMonks\Transformable(name="encrypt")
+         * @MediaMonks\Transformable(name="defuse_encrypt_key")
          */
         protected $email;
 
         /**
          * @ORM\Column(type="blob")
-         * @MediaMonks\Transformable(name="hash")
+         * @MediaMonks\Transformable(name="zend_hash")
          */
         protected $emailCanonical;
