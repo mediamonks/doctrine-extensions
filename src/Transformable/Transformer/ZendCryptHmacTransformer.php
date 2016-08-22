@@ -2,10 +2,13 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\Traits\GetValue;
 use Zend\Crypt\Hmac;
 
 class ZendCryptHmacTransformer extends ZendCryptHashTransformer
 {
+    use GetValue;
+
     /**
      * @var string
      */
@@ -28,7 +31,7 @@ class ZendCryptHmacTransformer extends ZendCryptHashTransformer
      */
     public function transform($value)
     {
-        return Hmac::compute($this->key, $this->algorithm, $value, $this->binary);
+        return Hmac::compute($this->key, $this->algorithm, $this->getValue($value), $this->binary);
     }
 }
 
