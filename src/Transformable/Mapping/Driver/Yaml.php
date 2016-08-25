@@ -5,9 +5,6 @@ namespace MediaMonks\Doctrine\Transformable\Mapping\Driver;
 use Gedmo\Mapping\Driver;
 use Gedmo\Mapping\Driver\File;
 
-/**
- * @author Robert Slootjes <robert@mediamonks.com>
- */
 class Yaml extends File implements Driver
 {
     /**
