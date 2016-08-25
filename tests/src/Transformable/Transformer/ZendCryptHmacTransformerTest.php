@@ -2,6 +2,8 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use Transformable\Fixture\InvalidValueObject;
+use Transformable\Fixture\ValueObject;
 use Zend\Crypt\Hmac;
 
 class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
@@ -35,5 +37,18 @@ class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
     public function testReverseTransform()
     {
         $this->assertEquals(self::VALUE, $this->transformer->reverseTransform(self::VALUE));
+    }
+
+    public function testTransformValueObject()
+    {
+        $this->transformer->transform(ValueObject::fromNative(self::VALUE));
+    }
+
+    /**
+     * @expectedException \MediaMonks\Doctrine\Exception\InvalidArgumentException
+     */
+    public function testThatExceptionIsTrownWhenNotToStringIsImplemented()
+    {
+        $this->transformer->transform(InvalidValueObject::fromNative(self::VALUE));
     }
 }
