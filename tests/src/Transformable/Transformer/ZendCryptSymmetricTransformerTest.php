@@ -3,6 +3,8 @@
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use Mockery as m;
+use Transformable\Fixture\InvalidValueObject;
+use Transformable\Fixture\ValueObject;
 
 class ZendCryptSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -83,5 +85,19 @@ class ZendCryptSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
     public function testTransformReverseTransformBinary()
     {
         $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform($this->getTransformerBinary()->transform(self::VALUE_BINARY)));
+    }
+
+    public function testTransformValueObject()
+    {
+        $this->assertEquals(bin2hex(self::VALUE_HEX_ENCRYPTED), $this->getTransformerHex()->transform(ValueObject::fromNative(self::VALUE_HEX)));
+        $this->assertEquals(self::VALUE_BINARY_ENCRYPTED, $this->getTransformerBinary()->transform(ValueObject::fromNative(self::VALUE_BINARY)));
+    }
+
+    /**
+     * @expectedException \MediaMonks\Doctrine\Exception\InvalidArgumentException
+     */
+    public function testThatExceptionIsTrownWhenNotToStringIsImplemented()
+    {
+        $this->getTransformerHex()->transform(InvalidValueObject::fromNative(self::VALUE_HEX));
     }
 }

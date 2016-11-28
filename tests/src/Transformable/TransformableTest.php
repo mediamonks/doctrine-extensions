@@ -157,8 +157,6 @@ class TransformableTest extends BaseTestCaseORM
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
-
-
     protected function getUsedEntityFixtures()
     {
         return [

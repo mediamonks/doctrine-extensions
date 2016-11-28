@@ -2,11 +2,14 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\Traits\GetValue;
 use Zend\Crypt\Symmetric\SymmetricInterface;
 use Zend\Math\Rand;
 
 class ZendCryptSymmetricTransformer implements TransformerInterface
 {
+    use GetValue;
+
     /**
      * @var SymmetricInterface
      */
@@ -68,7 +71,7 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
     public function transform($value)
     {
         $this->updateSalt();
-        $value = $this->crypt->encrypt($value);
+        $value = $this->crypt->encrypt($this->getValue($value));
 
         if (!$this->getBinary()) {
             $value = bin2hex($value);

@@ -15,4 +15,10 @@ interface TransformerInterface
      * @return mixed
      */
     public function reverseTransform($value);
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public function getValue($value);
 }

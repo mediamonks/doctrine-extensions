@@ -2,10 +2,13 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\Traits\GetValue;
 use Zend\Crypt\Hash;
 
 class ZendCryptHashTransformer implements TransformerInterface
 {
+    use GetValue;
+
     /**
      * @var string
      */
@@ -59,7 +62,7 @@ class ZendCryptHashTransformer implements TransformerInterface
      */
     public function transform($value)
     {
-        return Hash::compute($this->getAlgorithm(), $value, $this->getBinary());
+        return Hash::compute($this->getAlgorithm(), $this->getValue($value), $this->getBinary());
     }
 
     /**
