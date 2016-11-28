@@ -26,6 +26,26 @@ Currently these adapters are provided:
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 
+## System Requirements
+
+You need:
+
+- **PHP >= 5.5.0**
+
+To use the library.
+
+## Install
+
+Install this package by using Composer.
+
+```
+$ composer require mediamonks/crawler
+```
+
+## Security
+
+If you discover any security related issues, please email robert@mediamonks.com instead of using the issue tracker.
+
 # Documentation
 
 Please refer to the files in the [/doc](/doc) folder.
@@ -33,3 +53,7 @@ Please refer to the files in the [/doc](/doc) folder.
 # Credits
 
 This package was inspired by/uses code from [gedmo/doctrine-extensions](https://packagist.org/packages/gedmo/doctrine-extensions).
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
