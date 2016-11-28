@@ -30,7 +30,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 
 You need:
 
-- **PHP >= 5.5.0**
+- **PHP >= 5.4.0**
 
 To use the library.
 
