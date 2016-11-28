@@ -39,7 +39,7 @@ To use the library.
 Install this package by using Composer.
 
 ```
-$ composer require mediamonks/crawler
+$ composer require mediamonks/doctrine-extensions
 ```
 
 ## Security
