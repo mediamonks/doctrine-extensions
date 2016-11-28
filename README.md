@@ -44,7 +44,7 @@ $ composer require mediamonks/doctrine-extensions
 
 ## Security
 
-If you discover any security related issues, please email robert@mediamonks.com instead of using the issue tracker.
+If you discover any security related issues, please email devmonk@mediamonks.com instead of using the issue tracker.
 
 # Documentation
 
