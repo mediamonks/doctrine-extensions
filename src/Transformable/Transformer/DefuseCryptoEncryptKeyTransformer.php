@@ -4,9 +4,12 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use MediaMonks\Doctrine\Transformable\Transformer\Traits\GetValue;
 
 class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
 {
+    use GetValue;
+
     /**
      * @var string
      */
@@ -54,7 +57,7 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
      */
     public function transform($value)
     {
-        return Crypto::encrypt($value, $this->key, $this->getBinary());
+        return Crypto::encrypt($this->getValue($value), $this->key, $this->getBinary());
     }
 
     /**
