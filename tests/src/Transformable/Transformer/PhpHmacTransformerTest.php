@@ -2,9 +2,7 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hmac;
-
-class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
+class PhpHmacTransformerTest extends \PHPUnit_Framework_TestCase
 {
     const ALGORITHM = 'sha256';
     const KEY = '7922GS0S3LoF2T5anKX4zAx4ED3463dyXFK7s1bp';
@@ -18,7 +16,7 @@ class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transformer = new ZendCryptHmacTransformer(self::KEY, [
+        $this->transformer = new PhpHmacTransformer(self::KEY, [
             'algorithm' => self::ALGORITHM,
             'binary'    => self::BINARY
         ]);
@@ -27,7 +25,7 @@ class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
     public function testTransform()
     {
         $this->assertEquals(
-            Hmac::compute(self::KEY, self::ALGORITHM, self::VALUE, self::BINARY),
+            \hash_hmac(self::ALGORITHM, self::VALUE, self::KEY,self::BINARY),
             $this->transformer->transform(self::VALUE)
         );
     }

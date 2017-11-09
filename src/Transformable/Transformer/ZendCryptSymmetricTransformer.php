@@ -102,4 +102,3 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
         $this->crypt->setSalt(Rand::getBytes($this->crypt->getSaltSize(), $this->getRequireStrongRandomGenerator()));
     }
 }
-
