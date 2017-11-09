@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/mediamonks/doctrine-extensions.svg?branch=master)](https://travis-ci.org/MediaMonks/doctrine-extensions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/mediamonks/doctrine-extensions/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/?branch=master)
+[![Build Status](https://travis-ci.org/mediamonks/doctrine-extensions.svg?branch=master)](https://travis-ci.org/mediamnks/doctrine-extensions)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mediamnks/doctrine-extensions/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/mediamonks/doctrine-extensions/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mediamnks/doctrine-extensions/?branch=master)
 [![Total Downloads](https://poser.pugx.org/mediamonks/doctrine-extensions/downloads)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Stable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/stable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Unstable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/unstable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
@@ -20,6 +20,8 @@ The field's value will only be transformed when the value changed which also mak
 Currently these adapters are provided:
 
 - DefuseCryptoEncryptKeyTransformer - Encrypt/decrypts the value
+- PhpHashTransformer - Hashes the value
+- PhpHmacTransformer - Hashes the value with a key
 - ZendCryptHashTransformer - Hashes the value
 - ZendCryptHmacTransformer - Hashes the value with a key
 - ZendCryptSymmetricTransformer - Encrypts/decrypts the value
