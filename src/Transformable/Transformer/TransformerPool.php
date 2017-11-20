@@ -9,7 +9,7 @@ class TransformerPool implements \ArrayAccess
     /**
      * @var array
      */
-    protected $transformers = [];
+    private $transformers = [];
 
     /**
      * @param $name

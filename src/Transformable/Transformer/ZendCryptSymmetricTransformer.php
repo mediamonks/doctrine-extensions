@@ -10,17 +10,17 @@ class ZendCryptSymmetricTransformer implements TransformerInterface
     /**
      * @var SymmetricInterface
      */
-    protected $crypt;
+    private $crypt;
 
     /**
      * @var bool
      */
-    protected $binary = true;
+    private $binary = true;
 
     /**
      * @var bool
      */
-    protected $requireStrongRandomGenerator = true;
+    private $requireStrongRandomGenerator = true;
 
     /**
      * @param SymmetricInterface $crypt

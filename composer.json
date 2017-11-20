@@ -29,7 +29,7 @@
     }
   ],
   "require": {
-    "php": ">=5.4",
+    "php": ">=5.6",
     "gedmo/doctrine-extensions": "~2.4"
   },
   "require-dev": {
@@ -39,12 +39,14 @@
     "zendframework/zend-crypt": "^2.6",
     "mockery/mockery": "^0.9.4",
     "codeclimate/php-test-reporter": "^0.3.0",
-    "defuse/php-encryption": "^2.0"
+    "defuse/php-encryption": "^2.0",
+    "paragonie/halite": "^3.3"
   },
   "suggest": {
     "doctrine/orm": "to use the extensions with the ORM",
     "defuse/php-encryption": "to use the Defuse Crypto transformers",
-    "zendframework/zend-crypt": "to use the Zend Crypt transformers"
+    "zendframework/zend-crypt": "to use the Zend Crypt transformers",
+    "paragonie/halite": "to use the Libsodium Crypto transformers"
   },
   "autoload": {
     "psr-4": {

@@ -32,6 +32,10 @@ Configure services:
             class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHmacTransformer
             arguments: [%hmac_key%]
 
+        mediamonks.doctrine.transformable.transformer.halite_encrypt:
+            class: MediaMonks\Doctrine\Transformable\Transformer\LibsodiumSymmetricTransformer
+            arguments: [%encryption_key%]
+
         mediamonks.doctrine.transformable.transformer_pool:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
             calls:
@@ -39,6 +43,7 @@ Configure services:
                 - [set, ['zend_encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
                 - [set, ['zend_hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
                 - [set, ['zend_hmac', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hmac"]]
+                - [set, ['halite_encrypt', "@mediamonks.doctrine.transformable.transformer.halite_encrypt"]]
 
         doctrine.transformable.subscriber:
             class: MediaMonks\Doctrine\Transformable\TransformableSubscriber
