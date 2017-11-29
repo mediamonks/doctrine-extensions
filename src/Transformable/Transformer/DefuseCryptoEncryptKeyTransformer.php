@@ -10,12 +10,12 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     /**
      * @var string
      */
-    protected $key;
+    private $key;
 
     /**
      * @var bool
      */
-    protected $binary = true;
+    private $binary = true;
 
     /**
      * @param $key

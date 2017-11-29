@@ -7,7 +7,7 @@ abstract class AbstractHmacTransformer extends AbstractHashTransformer
     /**
      * @var string
      */
-    protected $key;
+    private $key;
 
     /**
      * @param string $key
