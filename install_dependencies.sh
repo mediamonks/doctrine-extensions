@@ -4,14 +4,7 @@ sudo apt-get update
 sudo apt-get install make build-essential automake php-pear
 
 if [[ "$TRAVIS_PHP_VERSION" < "7.2" ]]; then
-    git clone git://github.com/jedisct1/libsodium.git
-    cd libsodium
-    git checkout 1.0.15
-    ./autogen.sh
-    ./configure
-    make check
-    sudo make install
-    cd ..
+    apt-get install libsodium-dev
 fi;
 
 pecl channel-update pecl.php.net
