@@ -19,7 +19,8 @@ before_install:
 - if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then sudo make install; fi;
 - if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then cd ..; fi;
 - if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then pecl channel-update pecl.php.net; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then pecl install libsodium-1.0.7; else pecl install libsodium; fi;
+- if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then pecl install libsodium-1.0.7; fi;
+- if [ "$TRAVIS_PHP_VERSION" > "5.6" -a "$TRAVIS_PHP_VERSION" < "7.2" ]; pecl install libsodium;; fi;
 
 install:
   - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer remove "paragonie/halite" --dev --no-update $COMPOSER_FLAGS; fi;
