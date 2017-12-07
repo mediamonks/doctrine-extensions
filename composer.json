@@ -40,7 +40,7 @@
     "mockery/mockery": "^0.9.4",
     "codeclimate/php-test-reporter": "^0.3.0",
     "defuse/php-encryption": "^2.0",
-    "paragonie/halite": "^3.3"
+    "paragonie/halite": "^3.3||^4.0"
   },
   "suggest": {
     "doctrine/orm": "to use the extensions with the ORM",
