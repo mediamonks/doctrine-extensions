@@ -11,14 +11,8 @@ sudo: false
 before_install:
 - sudo apt-get update
 - sudo apt-get install make build-essential automake php5-dev php-pear
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then git clone git://github.com/jedisct1/libsodium.git; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then cd libsodium; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then git checkout 1.0.15; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then ./autogen.sh; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then ./configure && make check; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then sudo make install; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then cd ..; fi;
-- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then pecl channel-update pecl.php.net; fi;
+- if [ "$TRAVIS_PHP_VERSION" < "7.2" ]; then git clone git://github.com/jedisct1/libsodium.git && cd libsodium && git checkout 1.0.15 && ./autogen.sh && ./configure && make check && sudo make install && cd ..; fi;
+- pecl channel-update pecl.php.net
 - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then pecl install libsodium-1.0.7; fi;
 - if [ "$TRAVIS_PHP_VERSION" > "5.6" -a "$TRAVIS_PHP_VERSION" < "7.2" ]; pecl install libsodium;; fi;
 
