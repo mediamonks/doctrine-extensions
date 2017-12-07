@@ -12,6 +12,7 @@ before_install:
   - chmod +x ./install_dependencies.sh
 
 install:
+  - ./install_dependencies.sh
   - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then composer remove "paragonie/halite" --dev --no-update $COMPOSER_FLAGS; fi;
   - if [[ "$TRAVIS_PHP_VERSION" == "5.6" ]]; then composer require "paragonie/halite" --dev --prefer-source $COMPOSER_FLAGS; fi;
   - composer install --prefer-source $COMPOSER_FLAGS
