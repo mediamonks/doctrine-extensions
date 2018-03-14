@@ -17,8 +17,9 @@ This extension uses transform and reverseTransform methods to convert data to an
 
 The field's value will only be transformed when the value changed which also makes it possible to implement only a transform function for one way transformations like hashing.
 
-Currently these adapters are provided:
+Currently these adapters are provided in order of recommendation:
 
+- HaliteSymmetricTransformer - Encrypt/decrypts the value
 - DefuseCryptoEncryptKeyTransformer - Encrypt/decrypts the value
 - PhpHashTransformer - Hashes the value
 - PhpHmacTransformer - Hashes the value with a key
@@ -32,7 +33,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 
 You need:
 
-- **PHP >= 5.4.0**
+- **PHP >= 5.6 or >= 7.0**
 
 To use the library.
 
