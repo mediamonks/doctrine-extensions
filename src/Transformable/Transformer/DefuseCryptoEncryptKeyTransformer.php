@@ -8,9 +8,14 @@ use Defuse\Crypto\Key;
 class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
 {
     /**
-     * @var string
+     * @var mixed
      */
     private $key;
+
+    /**
+     * @var bool
+     */
+    private $keyVerified = false;
 
     /**
      * @var bool
@@ -18,14 +23,11 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     private $binary = true;
 
     /**
-     * @param $key
+     * @param mixed $key
      * @param array $options
      */
     public function __construct($key, array $options = [])
     {
-        if (is_string($key)) {
-            $key = Key::loadFromAsciiSafeString($key);
-        }
         $this->key = $key;
         $this->setOptions($options);
     }
@@ -38,6 +40,25 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
         if (array_key_exists('binary', $options)) {
             $this->binary = $options['binary'];
         }
+    }
+
+    /**
+     * @return Key
+     * @throws \InvalidArgumentException
+     */
+    public function getKey()
+    {
+        if (!$this->keyVerified) {
+            if (is_string($this->key)) {
+                $this->key = Key::loadFromAsciiSafeString($this->key);
+            }
+            if (!$this->key instanceof Key) {
+                throw new \InvalidArgumentException('Either pass a string key or a Key object');
+            }
+            $this->keyVerified = true;
+        }
+
+        return $this->key;
     }
 
     /**
@@ -54,7 +75,7 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
      */
     public function transform($value)
     {
-        return Crypto::encrypt($value, $this->key, $this->getBinary());
+        return Crypto::encrypt($value, $this->getKey(), $this->getBinary());
     }
 
     /**
@@ -63,7 +84,7 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
      */
     public function reverseTransform($value)
     {
-        return Crypto::decrypt($value, $this->key, $this->getBinary());
+        return Crypto::decrypt($value, $this->getKey(), $this->getBinary());
     }
 
 }

@@ -11,6 +11,9 @@ class HaliteSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        if (!extension_loaded('libsodium')) {
+            $this->markTestSkipped('Libsodium not installed');
+        }
         KeyFactory::save(
             KeyFactory::generateEncryptionKey(),
             self::ENCRYPTION_KEY_PATH
