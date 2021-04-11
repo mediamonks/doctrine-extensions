@@ -3,7 +3,7 @@
 namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
@@ -133,12 +133,12 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param AdapterInterface $ea
-     * @param ObjectManager $om
+     * @param EntityManagerInterface $om
      * @param UnitOfWork $uow
      * @param object $entity
      * @param string $method
      */
-    protected function handle(AdapterInterface $ea, ObjectManager $om, UnitOfWork $uow, $entity, $method)
+    protected function handle(AdapterInterface $ea, EntityManagerInterface $om, UnitOfWork $uow, $entity, $method)
     {
         /**
          * @var \Doctrine\ORM\EntityManager $om

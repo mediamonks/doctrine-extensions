@@ -2,15 +2,15 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hash;
+use Laminas\Crypt\Hash;
 
-class ZendCryptHashTransformer extends AbstractHashTransformer
+class LaminasCryptHashTransformer extends AbstractHashTransformer
 {
     /**
      * @param string $value
      * @return string
      */
-    public function transform($value)
+    public function transform($value): string
     {
         return Hash::compute($this->getAlgorithm(), $value, $this->getBinary());
     }

@@ -2,9 +2,10 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hmac;
+use PHPUnit\Framework\TestCase;
+use Laminas\Crypt\Hmac;
 
-class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
+class LaminasCryptHmacTransformerTest extends TestCase
 {
     const ALGORITHM = 'sha256';
     const KEY = '7922GS0S3LoF2T5anKX4zAx4ED3463dyXFK7s1bp';
@@ -16,9 +17,9 @@ class ZendCryptHmacTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->transformer = new ZendCryptHmacTransformer(self::KEY, [
+        $this->transformer = new LaminasCryptHmacTransformer(self::KEY, [
             'algorithm' => self::ALGORITHM,
             'binary'    => self::BINARY
         ]);

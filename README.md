@@ -11,21 +11,23 @@
 
 These extensions add more functionality to Doctrine2.
 
+> Breaking changes! All Zend transformers are now renamed to Laminas.
+  
 ## Transformable
 
 This extension uses transform and reverseTransform methods to convert data to and from the database. This can for example be used to encrypt a field when it's sent to the database and it will be decrypted when it is retrieved from the database.
 
 The field's value will only be transformed when the value changed which also makes it possible to implement only a transform function for one way transformations like hashing.
 
-Currently these adapters are provided in order of recommendation:
+Currently, these adapters are provided in order of recommendation:
 
 - HaliteSymmetricTransformer - Encrypt/decrypts the value
 - DefuseCryptoEncryptKeyTransformer - Encrypt/decrypts the value
 - PhpHashTransformer - Hashes the value
 - PhpHmacTransformer - Hashes the value with a key
-- ZendCryptHashTransformer - Hashes the value
-- ZendCryptHmacTransformer - Hashes the value with a key
-- ZendCryptSymmetricTransformer - Encrypts/decrypts the value
+- LaminasCryptHashTransformer - Hashes the value
+- LaminasCryptHmacTransformer - Hashes the value with a key
+- LaminasCryptSymmetricTransformer - Encrypts/decrypts the value
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 
@@ -33,7 +35,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 
 You need:
 
-- **PHP >= 5.6 or >= 7.0**
+- **PHP >= 7.3**
 
 To use the library.
 

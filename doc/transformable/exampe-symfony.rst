@@ -8,7 +8,7 @@ Configure services:
     # app/config/parameters.yml
     parameters:
         defuse_encryption_key: def000008728e..........3672cb0efd
-        zend_encryption_key: a_key_stronger_than_this_example
+        laminas_encryption_key: a_key_stronger_than_this_example
         hmac_key: a_key_stronger_than_this_example
 
     services:
@@ -16,20 +16,15 @@ Configure services:
             class: MediaMonks\Doctrine\Transformable\Transformer\DefuseCryptoEncryptKeyTransformer
             arguments: ["@defuse_encryption_key"]
 
-        zend.crypt.symmetric_encrypter:
-            class: Zend\Crypt\Symmetric\Mcrypt
-            calls:
-                - [setKey, [%zend_encryption_key%]]
+        mediamonks.doctrine.transformable.transformer.laminas_crypt_symmetric:
+            class: MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptSymmetricTransformer
+            arguments: ["%laminas_encryption_key%"]
 
-        mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric:
-            class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptSymmetricTransformer
-            arguments: ["@zend.crypt.symmetric_encrypter"]
+        mediamonks.doctrine.transformable.transformer.laminas_crypt_hash:
+            class: MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptHashTransformer
 
-        mediamonks.doctrine.transformable.transformer.zend_crypt_hash:
-            class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHashTransformer
-
-        mediamonks.doctrine.transformable.transformer.zend_crypt_hmac:
-            class: MediaMonks\Doctrine\Transformable\Transformer\ZendCryptHmacTransformer
+        mediamonks.doctrine.transformable.transformer.laminas_crypt_hmac:
+            class: MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptHmacTransformer
             arguments: [%hmac_key%]
 
         mediamonks.doctrine.transformable.transformer.halite_encrypt:
@@ -40,9 +35,9 @@ Configure services:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
             calls:
                 - [set, ['defuse_encrypt_key', "@mediamonks.doctrine.transformable.transformer.defuse_encrypt_key"]]
-                - [set, ['zend_encrypt', "@mediamonks.doctrine.transformable.transformer.zend_crypt_symmetric"]]
-                - [set, ['zend_hash', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hash"]]
-                - [set, ['zend_hmac', "@mediamonks.doctrine.transformable.transformer.zend_crypt_hmac"]]
+                - [set, ['laminas_encrypt', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_symmetric"]]
+                - [set, ['laminas_hash', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_hash"]]
+                - [set, ['laminas_hmac', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_hmac"]]
                 - [set, ['halite_encrypt', "@mediamonks.doctrine.transformable.transformer.halite_encrypt"]]
 
         doctrine.transformable.subscriber:

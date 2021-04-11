@@ -3,10 +3,10 @@
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use ParagonIE\Halite\Halite;
-use ParagonIE\Halite\HiddenString;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
+use ParagonIE\HiddenString\HiddenString;
 
 class HaliteSymmetricTransformer implements TransformerInterface
 {

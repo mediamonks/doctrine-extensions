@@ -2,7 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-class PhpHmacTransformerTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PhpHmacTransformerTest extends TestCase
 {
     const ALGORITHM = 'sha256';
     const KEY = '7922GS0S3LoF2T5anKX4zAx4ED3463dyXFK7s1bp';
@@ -14,7 +16,7 @@ class PhpHmacTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new PhpHmacTransformer(self::KEY, [
             'algorithm' => self::ALGORITHM,

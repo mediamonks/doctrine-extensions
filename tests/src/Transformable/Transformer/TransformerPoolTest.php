@@ -2,10 +2,10 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use MediaMonks\Doctrine\InvalidArgumentException;
 use \Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class TransformerPoolTest extends \PHPUnit_Framework_TestCase
+class TransformerPoolTest extends TestCase
 {
     /**
      * @var TransformerPool
@@ -22,7 +22,7 @@ class TransformerPoolTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformerKey = 'noop';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformerPool = new TransformerPool();
         $this->transformer = $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface');
@@ -48,7 +48,7 @@ class TransformerPoolTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidArgumentExceptionThrownOnNonExistingTransformer()
     {
-        $this->setExpectedException('MediaMonks\Doctrine\Exception\InvalidArgumentException');
+        $this->expectException('MediaMonks\Doctrine\Exception\InvalidArgumentException');
         $this->transformerPool->get('non_existing_transformer');
     }
 }

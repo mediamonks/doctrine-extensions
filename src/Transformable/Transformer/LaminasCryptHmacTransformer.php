@@ -2,9 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hmac;
+use Laminas\Crypt\Hmac;
 
-class ZendCryptHmacTransformer extends AbstractHmacTransformer
+class LaminasCryptHmacTransformer extends AbstractHmacTransformer
 {
     /**
      * @param string $value
