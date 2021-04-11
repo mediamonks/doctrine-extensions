@@ -27,7 +27,7 @@ Currently, these adapters are provided in order of recommendation:
 - PhpHmacTransformer - Hashes the value with a key
 - LaminasCryptHashTransformer - Hashes the value
 - LaminasCryptHmacTransformer - Hashes the value with a key
-- LaminasCryptSymmetricTransformer - Encrypts/decrypts the value
+- LaminasCryptSymmetricTransformer - Encrypts/decrypts the value using openssl (Mcrypt is deprecated), with aes as default algorithm
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 
