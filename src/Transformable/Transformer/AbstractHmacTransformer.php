@@ -23,7 +23,7 @@ abstract class AbstractHmacTransformer extends AbstractHashTransformer
     /**
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }

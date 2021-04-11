@@ -14,6 +14,7 @@ class LaminasCryptSymmetricTransformer implements TransformerInterface
     private $defaultAlgo = 'aes';
 
     /**
+     * @param string $key
      * @param array $options
      */
     public function __construct(string $key, array $options = [])
@@ -54,9 +55,9 @@ class LaminasCryptSymmetricTransformer implements TransformerInterface
 
     /**
      * @param string $value
-     * @return string | null
+     * @return string | bool
      */
-    public function reverseTransform($value): ?string
+    public function reverseTransform($value)
     {
         if ($value === null) {
             return null;

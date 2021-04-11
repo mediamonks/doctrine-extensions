@@ -49,7 +49,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @return array
      */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [
             Events::loadClassMetadata,
@@ -72,6 +72,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     public function onFlush(EventArgs $args)
     {
@@ -80,6 +81,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     public function postPersist(EventArgs $args)
     {
@@ -88,6 +90,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     public function postLoad(EventArgs $args)
     {
@@ -96,6 +99,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     public function postUpdate(EventArgs $args)
     {
@@ -104,6 +108,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     protected function transform(EventArgs $args)
     {
@@ -122,6 +127,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     /**
      * @param EventArgs $args
+     * @throws \Exception
      */
     protected function reverseTransform(EventArgs $args)
     {
@@ -137,6 +143,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param UnitOfWork $uow
      * @param object $entity
      * @param string $method
+     * @throws \Exception
      */
     protected function handle(AdapterInterface $ea, EntityManagerInterface $om, UnitOfWork $uow, $entity, $method)
     {
@@ -159,6 +166,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param string $method
      * @param array $column
      * @param ClassMetadata $meta
+     * @throws \Exception
      */
     protected function handleField($entity, $method, array $column, $meta)
     {
@@ -180,7 +188,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param $entity
      * @return string
      */
-    protected function getEntityValue($reflProp, $entity)
+    protected function getEntityValue($reflProp, $entity): string
     {
         $value = $reflProp->getValue($entity);
         if(is_resource($value)) {
@@ -196,6 +204,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param string $method
      * @param mixed $value
      * @return mixed
+     * @throws \Exception
      */
     protected function getNewValue($oid, $field, $transformerName, $method, $value)
     {
@@ -212,6 +221,7 @@ class TransformableSubscriber extends MappedEventSubscriber
      * @param string $method
      * @param mixed $oldValue
      * @return mixed
+     * @throws \Exception
      */
     protected function performTransformerOperation($transformerName, $method, $oldValue)
     {
@@ -252,8 +262,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @param string $name
      * @return TransformerInterface
+     * @throws \Exception
      */
-    protected function getTransformer($name)
+    protected function getTransformer($name): TransformerInterface
     {
         return $this->transformerPool->get($name);
     }
@@ -261,7 +272,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * {@inheritDoc}
      */
-    protected function getNamespace()
+    protected function getNamespace(): string
     {
         return __NAMESPACE__;
     }

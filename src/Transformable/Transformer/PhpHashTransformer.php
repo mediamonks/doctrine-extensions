@@ -6,7 +6,7 @@ class PhpHashTransformer extends AbstractHashTransformer
 {
     /**
      * @param string $value
-     * @return string
+     * @return string | bool
      */
     public function transform($value)
     {
