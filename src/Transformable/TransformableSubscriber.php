@@ -186,9 +186,9 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @param $reflProp
      * @param $entity
-     * @return string
+     * @return string|null
      */
-    protected function getEntityValue($reflProp, $entity): string
+    protected function getEntityValue($reflProp, $entity): ?string
     {
         $value = $reflProp->getValue($entity);
         if(is_resource($value)) {

@@ -5,6 +5,8 @@ namespace MediaMonks\Doctrine\Transformable;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
+use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
+use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
 use Tool\BaseTestCaseORM;
 use Transformable\Fixture\Test;
 use \Mockery as m;
@@ -37,7 +39,7 @@ class TransformableTest extends BaseTestCaseORM
             $transformer = $this->getDefaultTransformer();
         }
 
-        $transformerPool = m::mock('MediaMonks\Doctrine\Transformable\Transformer\TransformerPool');
+        $transformerPool = m::mock(TransformerPool::class);
         $transformerPool->shouldReceive('get')->andReturn($transformer);
 
         return new TransformableSubscriber($transformerPool);
@@ -48,7 +50,7 @@ class TransformableTest extends BaseTestCaseORM
      */
     protected function getDefaultTransformer()
     {
-        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer');
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
         return $transformer;
@@ -77,7 +79,7 @@ class TransformableTest extends BaseTestCaseORM
         $this->em->persist($test);
         $this->em->flush();
 
-        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
 
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
         $this->assertEquals(self::VALUE, $test->getValue());
@@ -97,7 +99,7 @@ class TransformableTest extends BaseTestCaseORM
         $this->em->persist($test);
         $this->em->flush();
 
-        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
 
         $this->assertEquals(null, $dbRow['value']);
         $this->assertNull($test->getValue());
@@ -105,7 +107,7 @@ class TransformableTest extends BaseTestCaseORM
 
     public function testTransformAfterUpdate()
     {
-        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer');
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED, self::VALUE_2_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE, self::VALUE_2);
 
@@ -120,7 +122,7 @@ class TransformableTest extends BaseTestCaseORM
         $test->setValue(self::VALUE_2);
         $this->em->flush();
 
-        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
 
         $this->assertEquals(self::VALUE_2_TRANSFORMED, $dbRow['value']);
     }
@@ -145,21 +147,21 @@ class TransformableTest extends BaseTestCaseORM
         $this->em->persist($test);
         $this->em->flush();
 
-        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
         $this->assertEquals(self::VALUE, $test->getValue());
 
         $test->setUpdated(true);
         $this->em->flush();
 
-        $dbRow = $this->em->getConnection()->fetchAssoc('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
         $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
 
 
-    protected function getUsedEntityFixtures()
+    protected function getUsedEntityFixtures(): array
     {
         return [
             self::ENTITY_TEST,
