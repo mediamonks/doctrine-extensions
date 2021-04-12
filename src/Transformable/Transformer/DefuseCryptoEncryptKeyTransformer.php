@@ -44,9 +44,10 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
 
     /**
      * @return Key
-     * @throws \InvalidArgumentException
+     * @throws \Defuse\Crypto\Exception\BadFormatException
+     * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function getKey()
+    public function getKey(): Key
     {
         if (!$this->keyVerified) {
             if (is_string($this->key)) {
@@ -64,7 +65,7 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     /**
      * @return bool
      */
-    public function getBinary()
+    public function getBinary(): bool
     {
         return $this->binary;
     }
@@ -72,8 +73,10 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     /**
      * @param mixed $value
      * @return string
+     * @throws \Defuse\Crypto\Exception\BadFormatException
+     * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function transform($value)
+    public function transform($value): string
     {
         return Crypto::encrypt($value, $this->getKey(), $this->getBinary());
     }
@@ -81,8 +84,11 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     /**
      * @param mixed $value
      * @return string
+     * @throws \Defuse\Crypto\Exception\BadFormatException
+     * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
+     * @throws \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): string
     {
         return Crypto::decrypt($value, $this->getKey(), $this->getBinary());
     }

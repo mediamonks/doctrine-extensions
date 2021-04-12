@@ -33,7 +33,7 @@ class Annotation extends AbstractAnnotationDriver
      * @param \ReflectionProperty $property
      * @return bool
      */
-    protected function isInherited(ClassMetadata $meta, \ReflectionProperty $property)
+    protected function isInherited(ClassMetadata $meta, \ReflectionProperty $property): bool
     {
         return ($meta->isMappedSuperclass && !$property->isPrivate()
             || $meta->isInheritedField($property->name)
@@ -46,7 +46,7 @@ class Annotation extends AbstractAnnotationDriver
      * @param $transformable
      * @return array
      */
-    protected function getConfig($property, $transformable)
+    protected function getConfig($property, $transformable): array
     {
         return [
             'field' => $property->getName(),

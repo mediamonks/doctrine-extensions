@@ -1,32 +1,27 @@
 language: php
 
+env:
+  - XDEBUG_MODE=coverage
+
 php:
-  - 5.6
-  - 7.0
-  - 7.1
+  - 7.3
+  - 7.4
+  - 8.0
 
 sudo: false
 
-before_install:
-- sudo apt-get update
-- sudo apt-get install make build-essential automake php5-dev php-pear
-- git clone git://github.com/jedisct1/libsodium.git
-- cd libsodium
-- git checkout 1.0.15
-- ./autogen.sh
-- ./configure && make check
-- sudo make install
-- cd ..
-- pecl channel-update pecl.php.net
-- if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then pecl install libsodium-1.0.7; else pecl install libsodium; fi;
-
-install:
-  - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer remove "paragonie/halite" --dev --no-update $COMPOSER_FLAGS; fi;
-  - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer require "paragonie/halite" --dev --prefer-source $COMPOSER_FLAGS; fi;
-  - composer install --prefer-source $COMPOSER_FLAGS
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 script:
-  - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then vendor/bin/phpunit --coverage-clover=coverage.clover; else vendor/bin/phpunit; fi;
+  - "phpunit --coverage-text --coverage-clover build/logs/clover.xml"
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build  -t clover --exit-code $TRAVIS_TEST_RESULT; fi
 
-after_script:
-  - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi;
+install:
+  - composer install --prefer-source $COMPOSER_FLAGS
+
+cache:
+  directories:
+    - $HOME/.composer/cache

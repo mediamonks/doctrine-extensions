@@ -1,11 +1,10 @@
 Libsodium & Halite
 ===========
 
-Libsodium extension: https://pecl.php.net/package/libsodium
-Using Libsodium in PHP projects: https://paragonie.com/book/pecl-libsodium
+PHP 7+ comes with libsodium included as `sodium`
 Halite (Halite is a high-level cryptography interface) https://github.com/paragonie/halite
 
-When you configure the LobsodiumCryptHashTransformer you need to generate an index key:
+When you configure the LibsodiumCryptHashTransformer you need to generate an index key:
 You would use the hash transformer for blind indexes (searchable versions of encrypted fields).
 
 High entropy or low entropy?

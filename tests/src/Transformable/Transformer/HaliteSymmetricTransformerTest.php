@@ -3,15 +3,16 @@
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use ParagonIE\Halite\KeyFactory;
+use PHPUnit\Framework\TestCase;
 
-class HaliteSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
+class HaliteSymmetricTransformerTest extends TestCase
 {
     const ENCRYPTION_KEY_PATH = __DIR__ . '/../Fixture/encryption.key';
     const VALUE_TO_ENCRYPT = 'foobar';
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        if (!extension_loaded('libsodium')) {
+        if (!extension_loaded('sodium')) {
             $this->markTestSkipped('Libsodium not installed');
         }
         KeyFactory::save(
@@ -20,7 +21,7 @@ class HaliteSymmetricTransformerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unlink(self::ENCRYPTION_KEY_PATH);
     }

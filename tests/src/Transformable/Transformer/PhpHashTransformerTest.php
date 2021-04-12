@@ -2,7 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-class PhpHashTransformerTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PhpHashTransformerTest extends TestCase
 {
     const ALGORITHM = 'sha256';
     const ALGORITHM_ALTERNATIVE = 'sha1';
@@ -13,7 +15,7 @@ class PhpHashTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new PhpHashTransformer(['algorithm' => self::ALGORITHM, 'binary' => false]);
     }

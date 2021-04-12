@@ -2,7 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-class DefuseCryptoEncryptKeyTransformerTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DefuseCryptoEncryptKeyTransformerTest extends TestCase
 {
     const KEY = 'def000008728ec119b871b3da49a98976a2538395ae3a1d9f6090baf40fd6531c8b70eb292b560f991e85629960568e323912c73c71be8879a009a3d9329383672cb0efd';
 
@@ -17,7 +19,7 @@ class DefuseCryptoEncryptKeyTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->transformer = new DefuseCryptoEncryptKeyTransformer(self::KEY);
     }
@@ -38,7 +40,7 @@ class DefuseCryptoEncryptKeyTransformerTest extends \PHPUnit_Framework_TestCase
         return new DefuseCryptoEncryptKeyTransformer(self::KEY);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         \Mockery::close();
 

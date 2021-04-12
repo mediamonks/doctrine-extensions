@@ -2,10 +2,12 @@
 
 namespace MediaMonks\Doctrine\Transformable;
 
+use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use \Mockery as m;
 use Doctrine\ORM\Events;
+use PHPUnit\Framework\TestCase;
 
-class TransformableSuscriberTest extends \PHPUnit_Framework_TestCase
+class TransformableSuscriberTest extends TestCase
 {
     const VALUE = 'foobar';
 
@@ -14,9 +16,9 @@ class TransformableSuscriberTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformableSubscriber;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer');
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
 

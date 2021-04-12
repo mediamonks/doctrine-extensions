@@ -14,8 +14,9 @@ class TransformerPool implements \ArrayAccess
     /**
      * @param $name
      * @return TransformerInterface|null
+     * @throws \Exception
      */
-    public function get($name)
+    public function get($name): ?TransformerInterface
     {
         return $this->offsetGet($name);
     }
@@ -24,8 +25,9 @@ class TransformerPool implements \ArrayAccess
      * @param $name
      * @param TransformerInterface $transformer
      * @return $this
+     * @throws \Exception
      */
-    public function set($name, TransformerInterface $transformer)
+    public function set($name, TransformerInterface $transformer): TransformerPool
     {
         return $this->offsetSet($name, $transformer);
     }
@@ -34,7 +36,7 @@ class TransformerPool implements \ArrayAccess
      * @param mixed $name
      * @return bool
      */
-    public function offsetExists($name)
+    public function offsetExists($name): bool
     {
         return array_key_exists($name, $this->transformers);
     }
@@ -44,7 +46,7 @@ class TransformerPool implements \ArrayAccess
      * @return TransformerInterface|null
      * @throws \Exception
      */
-    public function offsetGet($name)
+    public function offsetGet($name): ?TransformerInterface
     {
         if(!$this->offsetExists($name)) {
             throw new InvalidArgumentException(sprintf('Transformer with name "%s" is not set', $name));
@@ -58,7 +60,7 @@ class TransformerPool implements \ArrayAccess
      * @throws \Exception
      * @return $this
      */
-    public function offsetSet($key, $transformer)
+    public function offsetSet($key, $transformer): TransformerPool
     {
         $this->transformers[$key] = $transformer;
         return $this;
@@ -68,7 +70,7 @@ class TransformerPool implements \ArrayAccess
      * @param mixed $name
      * @return $this
      */
-    public function offsetUnset($name)
+    public function offsetUnset($name): TransformerPool
     {
         if($this->offsetExists($name)) {
             unset($this->transformers[$name]);

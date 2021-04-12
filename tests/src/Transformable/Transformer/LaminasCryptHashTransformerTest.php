@@ -2,9 +2,10 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hash;
+use PHPUnit\Framework\TestCase;
+use Laminas\Crypt\Hash;
 
-class ZendCryptHashTransformerTest extends \PHPUnit_Framework_TestCase
+class LaminasCryptHashTransformerTest extends TestCase
 {
     const ALGORITHM = 'sha256';
     const ALGORITHM_ALTERNATIVE = 'sha1';
@@ -15,32 +16,32 @@ class ZendCryptHashTransformerTest extends \PHPUnit_Framework_TestCase
      */
     protected $transformer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->transformer = new ZendCryptHashTransformer(['algorithm' => self::ALGORITHM, 'binary' => false]);
+        $this->transformer = new LaminasCryptHashTransformer(['algorithm' => self::ALGORITHM, 'binary' => false]);
     }
 
     public function testChangeAlgorithm()
     {
-        $transformer = new ZendCryptHashTransformer(['algorithm' => self::ALGORITHM_ALTERNATIVE]);
+        $transformer = new LaminasCryptHashTransformer(['algorithm' => self::ALGORITHM_ALTERNATIVE]);
         $this->assertEquals(self::ALGORITHM_ALTERNATIVE, $transformer->getAlgorithm());
     }
 
     public function testBinaryDefaultEnabled()
     {
-        $transformer = new ZendCryptHashTransformer();
+        $transformer = new LaminasCryptHashTransformer();
         $this->assertTrue($transformer->getBinary());
     }
 
     public function testDisableBinary()
     {
-        $transformer = new ZendCryptHashTransformer(['binary' => false]);
+        $transformer = new LaminasCryptHashTransformer(['binary' => false]);
         $this->assertFalse($transformer->getBinary());
     }
 
     public function testTransformHex()
     {
-        $this->assertEquals(Hash::compute(self::ALGORITHM, self::VALUE_HEX), $this->transformer->transform(self::VALUE_HEX));
+        $this->assertEquals(Hash::compute($this->transformer->getAlgorithm(), self::VALUE_HEX, $this->transformer->getBinary()), $this->transformer->transform(self::VALUE_HEX));
     }
 
     public function testReverseTransformHex()

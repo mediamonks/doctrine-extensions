@@ -31,7 +31,7 @@ class Yaml extends File implements Driver
      * @param $transformable
      * @return array
      */
-    protected function getConfig($property, $transformable)
+    protected function getConfig($property, $transformable): array
     {
         return [
             'field' => $property,
@@ -47,7 +47,7 @@ class Yaml extends File implements Driver
      *
      * @return array
      */
-    protected function _loadMappingFile($file)
+    protected function _loadMappingFile($file): array
     {
         return \Symfony\Component\Yaml\Yaml::parse(file_get_contents($file));
     }

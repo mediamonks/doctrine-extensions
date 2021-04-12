@@ -6,7 +6,7 @@ class PhpHmacTransformer extends AbstractHmacTransformer
 {
     /**
      * @param string $value
-     * @return string
+     * @return string | bool
      */
     public function transform($value)
     {

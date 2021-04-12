@@ -2,15 +2,15 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use Zend\Crypt\Hmac;
+use Laminas\Crypt\Hmac;
 
-class ZendCryptHmacTransformer extends AbstractHmacTransformer
+class LaminasCryptHmacTransformer extends AbstractHmacTransformer
 {
     /**
      * @param string $value
-     * @return string
+     * @return string | null
      */
-    public function transform($value)
+    public function transform($value): ?string
     {
         return Hmac::compute($this->getKey(), $this->algorithm, $value, $this->getBinary());
     }

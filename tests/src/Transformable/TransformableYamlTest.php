@@ -3,9 +3,9 @@
 namespace MediaMonks\Doctrine\Transformable;
 
 use Doctrine\Common\EventManager;
-use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use Doctrine\Persistence\Mapping\Driver\DefaultFileLocator;
 use MediaMonks\Doctrine\Transformable\Mapping\Driver\Yaml;
 use Mockery as m;
 use Tool\BaseTestCaseORM;

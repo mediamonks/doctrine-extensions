@@ -38,7 +38,7 @@ abstract class AbstractHashTransformer implements TransformerInterface
     /**
      * @return string
      */
-    public function getAlgorithm()
+    public function getAlgorithm(): string
     {
         return $this->algorithm;
     }
@@ -46,14 +46,14 @@ abstract class AbstractHashTransformer implements TransformerInterface
     /**
      * @return bool
      */
-    public function getBinary()
+    public function getBinary(): bool
     {
         return $this->binary;
     }
 
     /**
      * @param string $value
-     * @return string
+     * @return string | bool
      */
     public abstract function transform($value);
 
@@ -61,7 +61,7 @@ abstract class AbstractHashTransformer implements TransformerInterface
      * @param mixed $value
      * @return string
      */
-    public function reverseTransform($value)
+    public function reverseTransform($value): string
     {
         return $value;
     }

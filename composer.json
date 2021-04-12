@@ -1,56 +1,56 @@
 {
-  "name": "mediamonks/doctrine-extensions",
-  "type": "library",
-  "description": "Doctrine2 behavioral extensions which allows to transform (encrypt, decrypt, hash) your data automatically",
-  "keywords": [
-    "doctrine",
-    "extensions",
-    "transform",
-    "transformable",
-    "encrypt",
-    "decrypt",
-    "encryptable",
-    "hash",
-    "hashable",
-    "hmac",
-    "crypt",
-    "cryptable"
-  ],
-  "homepage": "https://www.mediamonks.com/",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Robert Slootjes",
-      "email": "robert@mediamonks.com"
+    "name": "mediamonks/doctrine-extensions",
+    "type": "library",
+    "description": "Doctrine2 behavioral extensions which allows to transform (encrypt, decrypt, hash) your data automatically",
+    "keywords": [
+        "doctrine",
+        "extensions",
+        "transform",
+        "transformable",
+        "encrypt",
+        "decrypt",
+        "encryptable",
+        "hash",
+        "hashable",
+        "hmac",
+        "crypt",
+        "cryptable"
+    ],
+    "homepage": "https://www.mediamonks.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robert Slootjes",
+            "email": "robert@mediamonks.com"
+        },
+        {
+            "name": "Bas Bloembergen",
+            "email": "basb@mediamonks.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "gedmo/doctrine-extensions": "^3.0",
+        "symfony/yaml": "^5.2"
     },
-    {
-      "name": "Bas Bloembergen",
-      "email": "basb@mediamonks.com"
+    "require-dev": {
+        "defuse/php-encryption": "^2.0",
+        "laminas/laminas-crypt": "^3.4",
+        "phpunit/phpunit": "^9.5",
+        "paragonie/halite": "^4.7",
+        "mockery/mockery": "^1.4",
+        "doctrine/orm": ">=2.5",
+        "doctrine/common": ">=2.5"
+    },
+    "suggest": {
+        "doctrine/orm": "to use the extensions with the ORM",
+        "defuse/php-encryption": "to use the Defuse Crypto transformers",
+        "laminas/laminas-crypt": "to use the Zend Crypt transformers",
+        "paragonie/halite": "to use the Libsodium Crypto transformers"
+    },
+    "autoload": {
+        "psr-4": {
+            "MediaMonks\\Doctrine\\": "src"
+        }
     }
-  ],
-  "require": {
-    "php": ">=5.6",
-    "gedmo/doctrine-extensions": "~2.4"
-  },
-  "require-dev": {
-    "doctrine/orm": ">=2.5.0",
-    "doctrine/common": ">=2.5.0",
-    "phpunit/phpunit": "^4.8",
-    "zendframework/zend-crypt": "^2.6",
-    "mockery/mockery": "^0.9.4",
-    "codeclimate/php-test-reporter": "^0.3.0",
-    "defuse/php-encryption": "^2.0",
-    "paragonie/halite": "^3.3"
-  },
-  "suggest": {
-    "doctrine/orm": "to use the extensions with the ORM",
-    "defuse/php-encryption": "to use the Defuse Crypto transformers",
-    "zendframework/zend-crypt": "to use the Zend Crypt transformers",
-    "paragonie/halite": "to use the Libsodium Crypto transformers"
-  },
-  "autoload": {
-    "psr-4": {
-      "MediaMonks\\Doctrine\\": "src"
-    }
-  }
 }
