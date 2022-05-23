@@ -12,33 +12,22 @@ class HaliteSymmetricTransformer implements TransformerInterface
 {
     const HALITE_LEGACY_VERSION = '1.0.0';
 
-    /**
-     * @var bool
-     */
-    private $binary = true;
+    private bool $binary = true;
+
+    private EncryptionKey $encryptionKey;
 
     /**
-     * @var EncryptionKey
-     */
-    private $encryptionKey = null;
-
-    /**
-     * @param $encryptionKey
-     * @param array $options
      * @throws \ParagonIE\Halite\Alerts\CannotPerformOperation
      * @throws \ParagonIE\Halite\Alerts\InvalidKey
      * @throws \SodiumException
      */
-    public function __construct($encryptionKey, array $options = [])
+    public function __construct(string $encryptionKey, array $options = [])
     {
         $this->encryptionKey = KeyFactory::loadEncryptionKey($encryptionKey);
 
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setOptions(array $options)
     {
         if (array_key_exists('binary', $options)) {
@@ -46,27 +35,22 @@ class HaliteSymmetricTransformer implements TransformerInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function getBinary(): bool
     {
         return $this->binary;
     }
 
     /**
-     * @param string $value
-     * @return string | null
      * @throws \ParagonIE\Halite\Alerts\CannotPerformOperation
      * @throws \ParagonIE\Halite\Alerts\InvalidDigestLength
      * @throws \ParagonIE\Halite\Alerts\InvalidMessage
      * @throws \ParagonIE\Halite\Alerts\InvalidType
      * @throws \SodiumException
      */
-    public function transform($value): ?string
+    public function transform(?string $value): string|bool
     {
         if (empty($value)) {
-            return null;
+            return false;
         }
 
         if ($this->binary) {
@@ -81,8 +65,6 @@ class HaliteSymmetricTransformer implements TransformerInterface
     }
 
     /**
-     * @param string $value
-     * @return string|null
      * @throws \ParagonIE\Halite\Alerts\CannotPerformOperation
      * @throws \ParagonIE\Halite\Alerts\InvalidDigestLength
      * @throws \ParagonIE\Halite\Alerts\InvalidMessage
@@ -90,7 +72,7 @@ class HaliteSymmetricTransformer implements TransformerInterface
      * @throws \ParagonIE\Halite\Alerts\InvalidType
      * @throws \SodiumException
      */
-    public function reverseTransform($value): ?string
+    public function reverseTransform(?string $value): string|null
     {
         if (empty($value)) {
             return null;

@@ -29,11 +29,11 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
-        "gedmo/doctrine-extensions": "^3.0",
+        "php": ">=8.0",
         "symfony/yaml": "^5.2"
     },
     "require-dev": {
+        "gedmo/doctrine-extensions": "^3.0",
         "defuse/php-encryption": "^2.0",
         "laminas/laminas-crypt": "^3.4",
         "phpunit/phpunit": "^9.5",
@@ -51,6 +51,11 @@
     "autoload": {
         "psr-4": {
             "MediaMonks\\Doctrine\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MediaMonks\\Doctrine\\Tests\\": "tests"
         }
     }
 }

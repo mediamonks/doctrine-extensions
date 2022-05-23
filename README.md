@@ -1,17 +1,20 @@
-[![Build Status](https://travis-ci.org/mediamonks/doctrine-extensions.svg?branch=master)](https://travis-ci.org/mediamonks/doctrine-extensions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MediaMonks/doctrine-extensions/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mediamonks/doctrine-extensions/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/mediamonks/doctrine-extensions/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/mediamonks/doctrine-extensions/?branch=master)
+[![Build Status](https://img.shields.io/github/workflow/status/mediamonks/doctrine-extensions/CI?label=CI&logo=github&style=flat-square)](https://github.com/mediamonks/doctrine-extensions/actions?query=workflow%3ACI)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/mediamonks/doctrine-extensions?label=codecov&logo=codecov&style=flat-square)](https://codecov.io/gh/mediamonks/doctrine-extensions)
 [![Total Downloads](https://poser.pugx.org/mediamonks/doctrine-extensions/downloads)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Stable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/stable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Unstable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/unstable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
-[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/c42e43fd-9c7b-47e1-8264-3a98961e9236.svg)](https://insight.sensiolabs.com/projects/c69936a4-afbf-4889-8b15-cf041a056d43)
 [![License](https://poser.pugx.org/mediamonks/doctrine-extensions/license)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 
 # MediaMonks Doctrine2 behavioral extensions
 
 These extensions add more functionality to Doctrine2.
 
-> Breaking changes! All Zend transformers are now renamed to Laminas.
+> Breaking changes!  
+  All Zend transformers are now renamed to Laminas.  
+  YAML support has been removed
+
+> New features!  
+  Attribute support
   
 ## Transformable
 
@@ -35,7 +38,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 
 You need:
 
-- **PHP >= 7.3**
+- **PHP >= 8.0**
 
 To use the library.
 

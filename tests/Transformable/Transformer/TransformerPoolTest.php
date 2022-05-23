@@ -1,7 +1,8 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable\Transformer;
+namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
 use \Mockery as m;
 use PHPUnit\Framework\TestCase;
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable\Transformer;
+namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptSymmetricTransformer;
 use PHPUnit\Framework\TestCase;
 
 class LaminasCryptSymmetricTransformerTest extends TestCase

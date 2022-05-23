@@ -7,34 +7,13 @@ use Defuse\Crypto\Key;
 
 class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
 {
-    /**
-     * @var mixed
-     */
-    private $key;
+    private bool $binary = true;
 
-    /**
-     * @var bool
-     */
-    private $keyVerified = false;
-
-    /**
-     * @var bool
-     */
-    private $binary = true;
-
-    /**
-     * @param mixed $key
-     * @param array $options
-     */
-    public function __construct($key, array $options = [])
+    public function __construct(private string $encryptionKey, array $options = [])
     {
-        $this->key = $key;
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setOptions(array $options)
     {
         if (array_key_exists('binary', $options)) {
@@ -43,53 +22,43 @@ class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
     }
 
     /**
-     * @return Key
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     public function getKey(): Key
     {
-        if (!$this->keyVerified) {
-            if (is_string($this->key)) {
-                $this->key = Key::loadFromAsciiSafeString($this->key);
-            }
-            if (!$this->key instanceof Key) {
-                throw new \InvalidArgumentException('Either pass a string key or a Key object');
-            }
-            $this->keyVerified = true;
-        }
-
-        return $this->key;
+        return Key::loadFromAsciiSafeString($this->encryptionKey);
     }
 
-    /**
-     * @return bool
-     */
     public function getBinary(): bool
     {
         return $this->binary;
     }
 
     /**
-     * @param mixed $value
-     * @return string
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function transform($value): string
+    public function transform(?string $value): string
     {
+        if (empty($value)) {
+            return false;
+        }
+
         return Crypto::encrypt($value, $this->getKey(), $this->getBinary());
     }
 
     /**
-     * @param mixed $value
-     * @return string
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @throws \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
      */
-    public function reverseTransform($value): string
+    public function reverseTransform(?string $value): string|null
     {
+        if (empty($value)) {
+            return null;
+        }
+
         return Crypto::decrypt($value, $this->getKey(), $this->getBinary());
     }
 

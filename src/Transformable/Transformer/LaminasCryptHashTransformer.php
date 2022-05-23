@@ -6,12 +6,12 @@ use Laminas\Crypt\Hash;
 
 class LaminasCryptHashTransformer extends AbstractHashTransformer
 {
-    /**
-     * @param string $value
-     * @return string
-     */
-    public function transform($value): string
+    public function transform(?string $value): string|bool
     {
+        if (empty($value)) {
+            return false;
+        }
+
         return Hash::compute($this->getAlgorithm(), $value, $this->getBinary());
     }
 }

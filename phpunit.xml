@@ -21,7 +21,7 @@
   </coverage>
   <testsuites>
     <testsuite name="Transformable Extension">
-      <directory suffix="Test.php">./tests/src/Transformable/</directory>
+      <directory suffix="Test.php">./tests/Transformable/</directory>
     </testsuite>
   </testsuites>
 </phpunit>

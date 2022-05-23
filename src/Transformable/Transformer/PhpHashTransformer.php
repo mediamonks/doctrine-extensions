@@ -4,12 +4,12 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 class PhpHashTransformer extends AbstractHashTransformer
 {
-    /**
-     * @param string $value
-     * @return string | bool
-     */
-    public function transform($value)
+    public function transform(?string $value): string|bool
     {
+        if (empty($value)) {
+            return false;
+        }
+
         return \hash($this->getAlgorithm(), $value, $this->getBinary());
     }
 }

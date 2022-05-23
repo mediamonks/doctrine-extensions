@@ -6,12 +6,12 @@ use Laminas\Crypt\Hmac;
 
 class LaminasCryptHmacTransformer extends AbstractHmacTransformer
 {
-    /**
-     * @param string $value
-     * @return string | null
-     */
-    public function transform($value): ?string
+    public function transform(?string $value): string|bool
     {
+        if (empty($value)) {
+            return false;
+        }
+
         return Hmac::compute($this->getKey(), $this->algorithm, $value, $this->getBinary());
     }
 }

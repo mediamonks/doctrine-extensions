@@ -1,13 +1,14 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable;
+namespace MediaMonks\Doctrine\Tests\Transformable;
 
+use MediaMonks\Doctrine\Transformable\TransformableSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use \Mockery as m;
 use Doctrine\ORM\Events;
 use PHPUnit\Framework\TestCase;
 
-class TransformableSuscriberTest extends TestCase
+class TransformableSubscriberTest extends TestCase
 {
     const VALUE = 'foobar';
 
