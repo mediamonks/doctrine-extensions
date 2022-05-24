@@ -2,37 +2,35 @@
 
 namespace MediaMonks\Doctrine\Transformable\Mapping\Driver;
 
-use Gedmo\Mapping\Driver\AbstractAnnotationDriver;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Gedmo\Mapping\Driver\AbstractAnnotationDriver;
+use JetBrains\PhpStorm\ArrayShape;
+use MediaMonks\Doctrine\Mapping\Transformable;
 
 /**
  * @author Robert Slootjes <robert@mediamonks.com>
  */
 class Annotation extends AbstractAnnotationDriver
 {
-    const TRANSFORMABLE = 'MediaMonks\Doctrine\Mapping\Annotation\Transformable';
+    const TRANSFORMABLE = 'MediaMonks\Doctrine\Mapping\Transformable';
 
     /**
      * {@inheritDoc}
      */
-    public function readExtendedMetadata($meta, array &$config)
+    public function readExtendedMetadata($meta, array &$config): void
     {
         $class = $this->getMetaReflectionClass($meta);
         foreach ($class->getProperties() as $property) {
             if ($this->isInherited($meta, $property)) {
                 continue;
             }
+
             if ($transformable = $this->reader->getPropertyAnnotation($property, self::TRANSFORMABLE)) {
                 $config['transformable'][] = $this->getConfig($property, $transformable);
             }
         }
     }
 
-    /**
-     * @param ClassMetadata $meta
-     * @param \ReflectionProperty $property
-     * @return bool
-     */
     protected function isInherited(ClassMetadata $meta, \ReflectionProperty $property): bool
     {
         return ($meta->isMappedSuperclass && !$property->isPrivate()
@@ -41,12 +39,7 @@ class Annotation extends AbstractAnnotationDriver
         );
     }
 
-    /**
-     * @param $property
-     * @param $transformable
-     * @return array
-     */
-    protected function getConfig($property, $transformable): array
+    #[ArrayShape(['field' => "mixed", 'name' => "mixed"])] protected function getConfig(\ReflectionProperty $property, Transformable $transformable): array
     {
         return [
             'field' => $property->getName(),

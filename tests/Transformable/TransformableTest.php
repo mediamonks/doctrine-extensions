@@ -1,20 +1,19 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable;
+namespace MediaMonks\Doctrine\Tests\Transformable;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
+use MediaMonks\Doctrine\Tests\Tool\BaseTestCaseORM;
+use Mediamonks\Doctrine\Tests\Transformable\Fixture\Test;
+use MediaMonks\Doctrine\Transformable\TransformableSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
-use Tool\BaseTestCaseORM;
-use Transformable\Fixture\Test;
-use \Mockery as m;
+use Mockery as m;
 
 class TransformableTest extends BaseTestCaseORM
 {
-    const ENTITY_TEST = "Transformable\\Fixture\\Test";
-
     const VALUE = 'original';
     const VALUE_TRANSFORMED = 'transformed';
 
@@ -26,11 +25,11 @@ class TransformableTest extends BaseTestCaseORM
      */
     protected $em;
 
-    protected function setUpEntityManager($transformer = null)
+    protected function setUpEntityManager($transformer = null, bool $annotations = false)
     {
         $evm = new EventManager();
         $evm->addEventSubscriber($this->getSubscriber($transformer));
-        $this->em = $this->getMockSqliteEntityManager($evm);
+        $this->em = $this->getDefaultMockSqliteEntityManager($evm, $annotations);
     }
 
     protected function getSubscriber($transformer = null)
@@ -45,14 +44,12 @@ class TransformableTest extends BaseTestCaseORM
         return new TransformableSubscriber($transformerPool);
     }
 
-    /**
-     * @return TransformableSubscriber
-     */
     protected function getDefaultTransformer()
     {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
+
         return $transformer;
     }
 
@@ -86,13 +83,49 @@ class TransformableTest extends BaseTestCaseORM
 
         $this->em->clear();
 
-        $test = $this->em->find('Transformable\Fixture\Test', 1);
+        $test = $this->em->find(Test::class, 1);
+        $this->assertEquals(self::VALUE, $test->getValue());
+    }
+
+    public function testAnnotationTransformedValueIsStored()
+    {
+        $this->setUpEntityManager(null, true);
+
+        $test = new Test();
+        $test->setValue(self::VALUE);
+
+        $this->em->persist($test);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+
+        $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        $this->assertEquals(self::VALUE, $test->getValue());
+
+        $this->em->clear();
+
+        $test = $this->em->find(Test::class, 1);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
     public function testSupportsNull()
     {
         $this->setUpEntityManager();
+
+        $test = new Test();
+
+        $this->em->persist($test);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+
+        $this->assertEquals(null, $dbRow['value']);
+        $this->assertNull($test->getValue());
+    }
+
+    public function testAnnotationSupportsNull()
+    {
+        $this->setUpEntityManager(null, true);
 
         $test = new Test();
 
@@ -127,13 +160,45 @@ class TransformableTest extends BaseTestCaseORM
         $this->assertEquals(self::VALUE_2_TRANSFORMED, $dbRow['value']);
     }
 
+    public function testAnnotationTransformAfterUpdate()
+    {
+        $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
+        $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED, self::VALUE_2_TRANSFORMED);
+        $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE, self::VALUE_2);
+
+        $this->setUpEntityManager($transformer, true);
+
+        $test = new Test();
+        $test->setValue(self::VALUE);
+
+        $this->em->persist($test);
+        $this->em->flush();
+
+        $test->setValue(self::VALUE_2);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+
+        $this->assertEquals(self::VALUE_2_TRANSFORMED, $dbRow['value']);
+    }
+
     public function testReverseTransformOfAlreadyPresentValue()
     {
         $this->setUpEntityManager();
 
         $this->em->getConnection()->insert('tests', ['id' => 1, 'value' => self::VALUE_TRANSFORMED, 'updated' => 0]);
 
-        $test = $this->em->find('Transformable\Fixture\Test', 1);
+        $test = $this->em->find(Test::class, 1);
+        $this->assertEquals(self::VALUE, $test->getValue());
+    }
+
+    public function testAnnotationReverseTransformOfAlreadyPresentValue()
+    {
+        $this->setUpEntityManager(null, true);
+
+        $this->em->getConnection()->insert('tests', ['id' => 1, 'value' => self::VALUE_TRANSFORMED, 'updated' => 0]);
+
+        $test = $this->em->find(Test::class, 1);
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
@@ -159,12 +224,32 @@ class TransformableTest extends BaseTestCaseORM
         $this->assertEquals(self::VALUE, $test->getValue());
     }
 
+    public function testAnnotationNotTransformingAnUnchangedValueTwice()
+    {
+        $this->setUpEntityManager(null, true);
 
+        $test = new Test();
+        $test->setValue(self::VALUE);
+
+        $this->em->persist($test);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        $this->assertEquals(self::VALUE, $test->getValue());
+
+        $test->setUpdated(true);
+        $this->em->flush();
+
+        $dbRow = $this->em->getConnection()->fetchAssociative('SELECT * FROM tests WHERE id = ?', [$test->getId()]);
+        $this->assertEquals(self::VALUE_TRANSFORMED, $dbRow['value']);
+        $this->assertEquals(self::VALUE, $test->getValue());
+    }
 
     protected function getUsedEntityFixtures(): array
     {
         return [
-            self::ENTITY_TEST,
+            Test::class,
         ];
     }
 }

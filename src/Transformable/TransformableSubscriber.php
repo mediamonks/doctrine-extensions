@@ -26,29 +26,13 @@ class TransformableSubscriber extends MappedEventSubscriber
     const TYPE_TRANSFORMED = 'transformed';
     const TYPE_PLAIN = 'plain';
 
-    /**
-     * @var TransformerPool
-     */
-    protected $transformerPool;
+    protected array $entityFieldValues = [];
 
-    /**
-     * @var array
-     */
-    protected $entityFieldValues = [];
-
-    /**
-     * TransformableListener constructor.
-     * @param TransformerPool $transformerPool
-     */
-    public function __construct(TransformerPool $transformerPool)
+    public function __construct(protected TransformerPool $transformerPool)
     {
-        $this->transformerPool = $transformerPool;
         parent::__construct();
     }
 
-    /**
-     * @return array
-     */
     public function getSubscribedEvents(): array
     {
         return [
@@ -60,10 +44,6 @@ class TransformableSubscriber extends MappedEventSubscriber
         ];
     }
 
-    /**
-     * @param EventArgs $eventArgs
-     * @return void
-     */
     public function loadClassMetadata(EventArgs $eventArgs)
     {
         $ea = $this->getEventAdapter($eventArgs);
@@ -71,7 +51,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     public function onFlush(EventArgs $args)
@@ -80,7 +59,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     public function postPersist(EventArgs $args)
@@ -89,7 +67,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     public function postLoad(EventArgs $args)
@@ -98,7 +75,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     public function postUpdate(EventArgs $args)
@@ -107,13 +83,12 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     protected function transform(EventArgs $args)
     {
-        $ea  = $this->getEventAdapter($args);
-        $om  = $ea->getObjectManager();
+        $ea = $this->getEventAdapter($args);
+        $om = $ea->getObjectManager();
         $uow = $om->getUnitOfWork();
 
         foreach ($ea->getScheduledObjectUpdates($uow) as $object) {
@@ -126,7 +101,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param EventArgs $args
      * @throws \Exception
      */
     protected function reverseTransform(EventArgs $args)
@@ -138,40 +112,32 @@ class TransformableSubscriber extends MappedEventSubscriber
     }
 
     /**
-     * @param AdapterInterface $ea
-     * @param EntityManagerInterface $om
-     * @param UnitOfWork $uow
-     * @param object $entity
-     * @param string $method
      * @throws \Exception
      */
-    protected function handle(AdapterInterface $ea, EntityManagerInterface $om, UnitOfWork $uow, $entity, $method)
+    protected function handle(AdapterInterface $ea, EntityManagerInterface $om, UnitOfWork $uow, object $entity, string $method)
     {
         /**
          * @var \Doctrine\ORM\EntityManager $om
          */
-        $meta   = $om->getClassMetadata(get_class($entity));
+        $meta = $om->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($om, $meta->name);
 
         if (isset($config[self::TRANSFORMABLE]) && $config[self::TRANSFORMABLE]) {
             foreach ($config[self::TRANSFORMABLE] as $column) {
                 $this->handleField($entity, $method, $column, $meta);
             }
+
             $ea->recomputeSingleObjectChangeSet($uow, $meta, $entity);
         }
     }
 
     /**
-     * @param $entity
-     * @param string $method
-     * @param array $column
-     * @param ClassMetadata $meta
      * @throws \Exception
      */
-    protected function handleField($entity, $method, array $column, $meta)
+    protected function handleField(object $entity, string $method, array $column, ClassMetadata $meta)
     {
         $field = $column['field'];
-        $oid   = spl_object_hash($entity);
+        $oid = spl_object_hash($entity);
 
         $reflProp = $meta->getReflectionProperty($field);
         $oldValue = $this->getEntityValue($reflProp, $entity);
@@ -183,61 +149,44 @@ class TransformableSubscriber extends MappedEventSubscriber
         }
     }
 
-    /**
-     * @param $reflProp
-     * @param $entity
-     * @return string|null
-     */
-    protected function getEntityValue($reflProp, $entity): ?string
+    protected function getEntityValue(\ReflectionProperty $reflProp, object $entity): string|null
     {
         $value = $reflProp->getValue($entity);
-        if(is_resource($value)) {
+
+        if (is_resource($value)) {
             $value = stream_get_contents($value);
         }
+
         return $value;
     }
 
     /**
-     * @param string $oid
-     * @param string $field
-     * @param string $transformerName
-     * @param string $method
-     * @param mixed $value
-     * @return mixed
      * @throws \Exception
      */
-    protected function getNewValue($oid, $field, $transformerName, $method, $value)
+    protected function getNewValue(string $oid, string $field, string $transformerName, string $method, mixed $value): mixed
     {
         if ($method === self::FUNCTION_TRANSFORM
             && $this->getEntityFieldValue($oid, $field, self::TYPE_PLAIN) === $value
         ) {
             return $this->getEntityFieldValue($oid, $field, self::TYPE_TRANSFORMED);
         }
+
         return $this->performTransformerOperation($transformerName, $method, $value);
     }
 
     /**
-     * @param string $transformerName
-     * @param string $method
-     * @param mixed $oldValue
-     * @return mixed
      * @throws \Exception
      */
-    protected function performTransformerOperation($transformerName, $method, $oldValue)
+    protected function performTransformerOperation(string $transformerName, string $method, mixed $oldValue): mixed
     {
         if (is_null($oldValue)) {
             return null;
         }
+
         return $this->getTransformer($transformerName)->$method($oldValue);
     }
 
-    /**
-     * @param string $oid
-     * @param string $field
-     * @param string $type
-     * @return mixed|null
-     */
-    protected function getEntityFieldValue($oid, $field, $type)
+    protected function getEntityFieldValue(string $oid, string $field, string $type): mixed
     {
         if (!isset($this->entityFieldValues[$oid][$field])) {
             return null;
@@ -245,26 +194,18 @@ class TransformableSubscriber extends MappedEventSubscriber
         return $this->entityFieldValues[$oid][$field][$type];
     }
 
-    /**
-     * @param string $oid
-     * @param string $field
-     * @param mixed $transformed
-     * @param mixed $plain
-     */
-    protected function storeOriginalFieldData($oid, $field, $transformed, $plain)
+    protected function storeOriginalFieldData(string $oid, string $field, mixed $transformed, mixed $plain)
     {
         $this->entityFieldValues[$oid][$field] = [
             self::TYPE_TRANSFORMED => $transformed,
-            self::TYPE_PLAIN       => $plain
+            self::TYPE_PLAIN => $plain,
         ];
     }
 
     /**
-     * @param string $name
-     * @return TransformerInterface
      * @throws \Exception
      */
-    protected function getTransformer($name): TransformerInterface
+    protected function getTransformer(string $name): TransformerInterface
     {
         return $this->transformerPool->get($name);
     }

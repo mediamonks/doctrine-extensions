@@ -29,9 +29,8 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
-        "gedmo/doctrine-extensions": "^3.0",
-        "symfony/yaml": "^5.2"
+        "php": ">=8.0",
+        "gedmo/doctrine-extensions": "^3.0"
     },
     "require-dev": {
         "defuse/php-encryption": "^2.0",
@@ -51,6 +50,11 @@
     "autoload": {
         "psr-4": {
             "MediaMonks\\Doctrine\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MediaMonks\\Doctrine\\Tests\\": "tests"
         }
     }
 }

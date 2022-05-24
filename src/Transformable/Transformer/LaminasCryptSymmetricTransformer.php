@@ -6,17 +6,10 @@ use Laminas\Crypt\BlockCipher;
 
 class LaminasCryptSymmetricTransformer implements TransformerInterface
 {
-    /**
-     * @var BlockCipher
-     */
-    private $crypt;
+    private BlockCipher $crypt;
 
-    private $defaultAlgo = 'aes';
+    private string $defaultAlgo = 'aes';
 
-    /**
-     * @param string $key
-     * @param array $options
-     */
     public function __construct(string $key, array $options = [])
     {
         $this->crypt = BlockCipher::factory('openssl', $options['encryption_options'] ?? ['algo' => $this->defaultAlgo]);
@@ -26,9 +19,6 @@ class LaminasCryptSymmetricTransformer implements TransformerInterface
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $options
-     */
     protected function setOptions(array $options)
     {
         if (array_key_exists('binary', $options)) {
@@ -36,28 +26,21 @@ class LaminasCryptSymmetricTransformer implements TransformerInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function getBinary(): bool
     {
         return $this->crypt->getBinaryOutput();
     }
 
-    /**
-     * @param string $value
-     * @return string
-     */
-    public function transform($value): string
+    public function transform(?string $value): string|bool
     {
+        if (empty($value)) {
+            return false;
+        }
+
         return $this->crypt->encrypt($value);
     }
 
-    /**
-     * @param string $value
-     * @return string | bool
-     */
-    public function reverseTransform($value)
+    public function reverseTransform(?string $value): bool|string|null
     {
         if ($value === null) {
             return null;
