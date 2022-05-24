@@ -29,8 +29,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
-        "symfony/yaml": "^5.2"
+        "php": ">=8.0"
     },
     "require-dev": {
         "gedmo/doctrine-extensions": "^3.0",
