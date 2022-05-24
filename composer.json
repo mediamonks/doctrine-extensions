@@ -29,10 +29,10 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "gedmo/doctrine-extensions": "^3.0"
     },
     "require-dev": {
-        "gedmo/doctrine-extensions": "^3.0",
         "defuse/php-encryption": "^2.0",
         "laminas/laminas-crypt": "^3.4",
         "phpunit/phpunit": "^9.5",

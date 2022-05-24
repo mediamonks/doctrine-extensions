@@ -3,14 +3,13 @@
 namespace MediaMonks\Doctrine\Mapping;
 
 use Attribute;
-use Gedmo\Mapping\Annotation\Annotation as GedmoAnnotation;
 
 /**
  * @Annotation
  * @Target("PROPERTY")
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class Transformable implements GedmoAnnotation
+final class Transformable
 {
     public function __construct(array $data = [], public string $name = 'noop')
     {
