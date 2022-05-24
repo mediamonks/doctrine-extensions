@@ -17,7 +17,7 @@ class Annotation extends AbstractAnnotationDriver
     /**
      * {@inheritDoc}
      */
-    public function readExtendedMetadata($meta, array &$config)
+    public function readExtendedMetadata($meta, array &$config): void
     {
         $class = $this->getMetaReflectionClass($meta);
         foreach ($class->getProperties() as $property) {
