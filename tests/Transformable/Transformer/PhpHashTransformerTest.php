@@ -1,7 +1,9 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable\Transformer;
+namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\PhpHashTransformer;
+use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use PHPUnit\Framework\TestCase;
 
 class PhpHashTransformerTest extends TestCase

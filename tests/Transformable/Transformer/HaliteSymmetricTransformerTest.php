@@ -1,7 +1,8 @@
 <?php
 
-namespace MediaMonks\Doctrine\Transformable\Transformer;
+namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
+use MediaMonks\Doctrine\Transformable\Transformer\HaliteSymmetricTransformer;
 use ParagonIE\Halite\KeyFactory;
 use PHPUnit\Framework\TestCase;
 

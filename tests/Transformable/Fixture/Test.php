@@ -1,17 +1,40 @@
 <?php
 
-namespace Transformable\Fixture;
+namespace Mediamonks\Doctrine\Tests\Transformable\Fixture;
 
 use Doctrine\ORM\Mapping as ORM;
-use MediaMonks\Doctrine\Mapping\Annotation as MediaMonks;
+use MediaMonks\Doctrine\Mapping as MediaMonks;
 
-
-class YamlTest
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="tests")
+ */
+#[ORM\Entity()]
+#[ORM\Table(name: 'tests')]
+class Test
 {
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @MediaMonks\Transformable(name="mocked")
+     */
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[MediaMonks\Transformable(name: 'mocked')]
     private $value;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    #[ORM\Column(type: 'boolean')]
     private $updated = false;
 
     /**
