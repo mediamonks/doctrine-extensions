@@ -3,7 +3,7 @@
 namespace MediaMonks\Doctrine\Mapping;
 
 use Attribute;
-use Doctrine\ORM\Mapping\Annotation;
+use Gedmo\Mapping\Annotation\Annotation;
 
 /**
  * @Annotation
