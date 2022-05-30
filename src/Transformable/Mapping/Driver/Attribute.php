@@ -2,9 +2,9 @@
 
 namespace MediaMonks\Doctrine\Transformable\Mapping\Driver;
 
-use Gedmo\Mapping\Driver\AnnotationDriverInterface;
+use Gedmo\Mapping\Driver\AttributeDriverInterface;
 
-final class Attribute extends Annotation implements AnnotationDriverInterface
+final class Attribute extends Annotation implements AttributeDriverInterface
 {
 
 }
