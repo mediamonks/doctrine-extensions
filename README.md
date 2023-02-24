@@ -1,4 +1,5 @@
-[![Build Status](https://img.shields.io/github/workflow/status/mediamonks/doctrine-extensions/CI?label=CI&logo=github&style=flat-square)](https://github.com/mediamonks/doctrine-extensions/actions?query=workflow%3ACI)
+
+[![Build Status](https://img.shields.io/github/actions/workflow/status/mediamonks/doctrine-extensions/continuous-integration.yml?label=CI&logo=github&style=flat-square)](https://github.com/mediamonks/doctrine-extensions/actions)
 [![Code Coverage](https://img.shields.io/codecov/c/gh/mediamonks/doctrine-extensions?label=codecov&logo=codecov&style=flat-square)](https://codecov.io/gh/mediamonks/doctrine-extensions)
 [![Total Downloads](https://poser.pugx.org/mediamonks/doctrine-extensions/downloads)](https://packagist.org/packages/mediamonks/doctrine-extensions)
 [![Latest Stable Version](https://poser.pugx.org/mediamonks/doctrine-extensions/v/stable)](https://packagist.org/packages/mediamonks/doctrine-extensions)
