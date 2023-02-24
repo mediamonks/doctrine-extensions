@@ -2,14 +2,16 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
+use ArrayAccess;
+use Exception;
 use MediaMonks\Doctrine\Exception\InvalidArgumentException;
 
-class TransformerPool implements \ArrayAccess
+class TransformerPool implements ArrayAccess
 {
     private array $transformers = [];
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function get(string $name): ?TransformerInterface
     {
@@ -17,11 +19,12 @@ class TransformerPool implements \ArrayAccess
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function set(string $name, TransformerInterface $transformer): TransformerPool
     {
-        return $this->offsetSet($name, $transformer);
+        $this->offsetSet($name, $transformer);
+        return $this;
     }
 
     public function offsetExists(mixed $name): bool
@@ -30,7 +33,7 @@ class TransformerPool implements \ArrayAccess
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function offsetGet(mixed $name): ?TransformerInterface
     {
@@ -42,21 +45,17 @@ class TransformerPool implements \ArrayAccess
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function offsetSet(mixed $key, mixed $transformer): TransformerPool
+    public function offsetSet(mixed $key, mixed $transformer): void
     {
         $this->transformers[$key] = $transformer;
-
-        return $this;
     }
 
-    public function offsetUnset(mixed $name): TransformerPool
+    public function offsetUnset(mixed $name): void
     {
         if ($this->offsetExists($name)) {
             unset($this->transformers[$name]);
         }
-
-        return $this;
     }
 }
