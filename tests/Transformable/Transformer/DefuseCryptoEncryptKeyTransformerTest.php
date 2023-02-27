@@ -4,6 +4,7 @@ namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
 use MediaMonks\Doctrine\Transformable\Transformer\DefuseCryptoEncryptKeyTransformer;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class DefuseCryptoEncryptKeyTransformerTest extends TestCase
@@ -16,67 +17,66 @@ class DefuseCryptoEncryptKeyTransformerTest extends TestCase
     const VALUE_BINARY = 'foobar_binary';
     const VALUE_BINARY_ENCRYPTED = 'foobar_binary_encrypted';
 
-    /**
-     * @var TransformerInterface
-     */
-    protected $transformer;
+    protected TransformerInterface $transformer;
 
     protected function setUp(): void
     {
         $this->transformer = new DefuseCryptoEncryptKeyTransformer(self::KEY);
     }
 
-    protected function getTransformerHex()
+    protected function getTransformerHex(): DefuseCryptoEncryptKeyTransformer
     {
-        $mock = \Mockery::mock('alias:Defuse\Crypto\Crypto');
+        $mock = Mockery::mock('alias:Defuse\Crypto\Crypto');
         $mock->shouldReceive('encrypt')->andReturn(self::VALUE_HEX_ENCRYPTED);
         $mock->shouldReceive('decrypt')->andReturn(self::VALUE_HEX);
+
         return new DefuseCryptoEncryptKeyTransformer(self::KEY, ['binary' => false]);
     }
 
-    protected function getTransformerBinary()
+    protected function getTransformerBinary(): DefuseCryptoEncryptKeyTransformer
     {
-        $mock = \Mockery::mock('alias:Defuse\Crypto\Crypto');
+        $mock = Mockery::mock('alias:Defuse\Crypto\Crypto');
         $mock->shouldReceive('encrypt')->andReturn(self::VALUE_BINARY_ENCRYPTED);
         $mock->shouldReceive('decrypt')->andReturn(self::VALUE_BINARY);
+
         return new DefuseCryptoEncryptKeyTransformer(self::KEY);
     }
 
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
 
         parent::tearDown();
     }
 
-    public function testBinaryDefaultEnabled()
+    public function testBinaryDefaultEnabled(): void
     {
         $transformer = new DefuseCryptoEncryptKeyTransformer(self::KEY);
         $this->assertTrue($transformer->getBinary());
     }
 
-    public function testDisableBinary()
+    public function testDisableBinary(): void
     {
         $transformer = new DefuseCryptoEncryptKeyTransformer(self::KEY, ['binary' => false]);
         $this->assertFalse($transformer->getBinary());
     }
 
-    public function testTransformHex()
+    public function testTransformHex(): void
     {
         $this->assertEquals(self::VALUE_HEX_ENCRYPTED, $this->getTransformerHex()->transform(self::VALUE_HEX));
     }
 
-    public function testReverseTransformHex()
+    public function testReverseTransformHex(): void
     {
         $this->assertEquals(self::VALUE_HEX, $this->getTransformerHex()->reverseTransform(self::VALUE_HEX_ENCRYPTED));
     }
 
-    public function testTransformBinary()
+    public function testTransformBinary(): void
     {
         $this->assertEquals(self::VALUE_BINARY_ENCRYPTED, $this->getTransformerBinary()->transform(self::VALUE_BINARY));
     }
 
-    public function testReverseTransformBinary()
+    public function testReverseTransformBinary(): void
     {
         $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform(self::VALUE_BINARY_ENCRYPTED));
     }

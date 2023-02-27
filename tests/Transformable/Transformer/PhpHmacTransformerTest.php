@@ -5,6 +5,7 @@ namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 use MediaMonks\Doctrine\Transformable\Transformer\PhpHmacTransformer;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use PHPUnit\Framework\TestCase;
+use function hash_hmac;
 
 class PhpHmacTransformerTest extends TestCase
 {
@@ -13,28 +14,25 @@ class PhpHmacTransformerTest extends TestCase
     const BINARY = false;
     const VALUE = 'foobar';
 
-    /**
-     * @var TransformerInterface
-     */
-    protected $transformer;
+    protected TransformerInterface $transformer;
 
     protected function setUp(): void
     {
         $this->transformer = new PhpHmacTransformer(self::KEY, [
             'algorithm' => self::ALGORITHM,
-            'binary'    => self::BINARY
+            'binary' => self::BINARY
         ]);
     }
 
-    public function testTransform()
+    public function testTransform(): void
     {
         $this->assertEquals(
-            \hash_hmac(self::ALGORITHM, self::VALUE, self::KEY,self::BINARY),
+            hash_hmac(self::ALGORITHM, self::VALUE, self::KEY, self::BINARY),
             $this->transformer->transform(self::VALUE)
         );
     }
 
-    public function testReverseTransform()
+    public function testReverseTransform(): void
     {
         $this->assertEquals(self::VALUE, $this->transformer->reverseTransform(self::VALUE));
     }

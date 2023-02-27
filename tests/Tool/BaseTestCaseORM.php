@@ -13,6 +13,7 @@ namespace MediaMonks\Doctrine\Tests\Tool;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
@@ -20,9 +21,9 @@ use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Base test case contains common mock objects
@@ -33,15 +34,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseTestCaseORM extends TestCase
 {
-    /**
-     * @var EntityManager|null
-     */
-    protected $em;
-
-    /**
-     * @var MockObject&LoggerInterface
-     */
-    protected $queryLogger;
+    protected ?EntityManager $em;
+    protected LoggerInterface $queryLogger;
 
     protected function setUp(): void
     {
@@ -55,23 +49,26 @@ abstract class BaseTestCaseORM extends TestCase
      */
     protected function getDefaultMockSqliteEntityManager(EventManager $evm = null, bool $annotations = false): EntityManager
     {
-        $conn = [
-            'driver' => 'pdo_sqlite',
-            'memory' => true,
-        ];
+        try {
+            $conn = DriverManager::getConnection([
+                'driver' => 'pdo_sqlite',
+                'memory' => true,
+            ]);
+            $config = !$annotations ? $this->getDefaultConfiguration() : $this->getDefaultConfiguration($annotations);
+            $em = new EntityManager($conn, $config, $evm ?: $this->getEventManager());
+            $schema = array_map(static function ($class) use ($em) {
+                return $em->getClassMetadata($class);
+            }, $this->getUsedEntityFixtures());
 
-        $config = !$annotations ? $this->getDefaultConfiguration() : $this->getDefaultConfiguration($annotations);
-        $em = EntityManager::create($conn, $config, $evm ?: $this->getEventManager());
+            $schemaTool = new SchemaTool($em);
+            $schemaTool->dropSchema([]);
+            $schemaTool->createSchema($schema);
+            $this->em = $em;
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
 
-        $schema = array_map(static function ($class) use ($em) {
-            return $em->getClassMetadata($class);
-        }, $this->getUsedEntityFixtures());
-
-        $schemaTool = new SchemaTool($em);
-        $schemaTool->dropSchema([]);
-        $schemaTool->createSchema($schema);
-
-        return $this->em = $em;
+        return $this->em;
     }
 
 
@@ -109,5 +106,68 @@ abstract class BaseTestCaseORM extends TestCase
         }
 
         return $config;
+    }
+
+    /**
+     * @return bool|array<string, mixed>
+     */
+    protected function fetchAssociative(string $query, array $params = [], array $types = []): array|bool
+    {
+        try {
+            return $this->em->getConnection()->fetchAssociative($query, $params, $types);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function find($className, $id, $lockMode = null, $lockVersion = null): ?object
+    {
+        try {
+            return $this->em->find($className, $id, $lockMode, $lockVersion);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function insert($table, array $data, array $types = []): int|string
+    {
+        try {
+            return $this->em->getConnection()->insert($table, $data, $types);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function persistAndFlush(object $entity): void
+    {
+        try {
+            $this->em->persist($entity);
+            $this->em->flush();
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function clear(): void
+    {
+        try {
+            $this->em->clear();
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function flush(): void
+    {
+        try {
+            $this->em->flush();
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    protected function getEventManager(): EventManager
+    {
+        return new EventManager();
     }
 }

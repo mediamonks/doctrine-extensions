@@ -6,13 +6,14 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Gedmo\Mapping\Driver\AbstractAnnotationDriver;
 use JetBrains\PhpStorm\ArrayShape;
 use MediaMonks\Doctrine\Mapping\Transformable;
+use ReflectionProperty;
 
 /**
  * @author Robert Slootjes <robert@mediamonks.com>
  */
 class Annotation extends AbstractAnnotationDriver
 {
-    const TRANSFORMABLE = 'MediaMonks\Doctrine\Mapping\Transformable';
+    const TRANSFORMABLE = Transformable::class;
 
     /**
      * {@inheritDoc}
@@ -31,19 +32,20 @@ class Annotation extends AbstractAnnotationDriver
         }
     }
 
-    protected function isInherited(ClassMetadata $meta, \ReflectionProperty $property): bool
+    protected function isInherited(ClassMetadata $meta, ReflectionProperty $property): bool
     {
         return ($meta->isMappedSuperclass && !$property->isPrivate()
-            || $meta->isInheritedField($property->name)
-            || isset($meta->associationMappings[$property->name]['inherited'])
+                || $meta->isInheritedField($property->name)
+                || isset($meta->associationMappings[$property->name]['inherited'])
         );
     }
 
-    #[ArrayShape(['field' => "mixed", 'name' => "mixed"])] protected function getConfig(\ReflectionProperty $property, Transformable $transformable): array
+    #[ArrayShape(['field' => "string", 'name' => "string"])]
+    protected function getConfig(ReflectionProperty $property, Transformable $transformable): array
     {
         return [
             'field' => $property->getName(),
-            'name'  => $transformable->name
+            'name' => $transformable->name
         ];
     }
 }

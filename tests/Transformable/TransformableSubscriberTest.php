@@ -2,20 +2,16 @@
 
 namespace MediaMonks\Doctrine\Tests\Transformable;
 
+use Doctrine\ORM\Events;
 use MediaMonks\Doctrine\Transformable\TransformableSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
-use \Mockery as m;
-use Doctrine\ORM\Events;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class TransformableSubscriberTest extends TestCase
 {
     const VALUE = 'foobar';
-
-    /**
-     * @var TransformableSubscriber
-     */
-    protected $transformableSubscriber;
+    protected TransformableSubscriber $transformableSubscriber;
 
     public function setUp(): void
     {
@@ -29,7 +25,7 @@ class TransformableSubscriberTest extends TestCase
         $this->transformableSubscriber = new TransformableSubscriber($transformerPool);
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $subscribedEvents = $this->transformableSubscriber->getSubscribedEvents();
 

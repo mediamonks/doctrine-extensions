@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpPropertyOnlyWrittenInspection */
 
 namespace Mediamonks\Doctrine\Tests\Transformable\Fixture;
 
@@ -9,7 +10,7 @@ use MediaMonks\Doctrine\Mapping as MediaMonks;
  * @ORM\Entity
  * @ORM\Table(name="tests")
  */
-#[ORM\Entity()]
+#[ORM\Entity]
 #[ORM\Table(name: 'tests')]
 class Test
 {
@@ -21,63 +22,44 @@ class Test
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    private $id;
+    private int $id;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      * @MediaMonks\Transformable(name="mocked")
      */
     #[ORM\Column(type: 'text', nullable: true)]
     #[MediaMonks\Transformable(name: 'mocked')]
-    private $value;
+    private ?string $value = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
     #[ORM\Column(type: 'boolean')]
-    private $updated = false;
+    private bool $updated = false;
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->value;
     }
 
-    /**
-     * @param mixed $value
-     * @return Test
-     */
-    public function setValue($value)
+    public function setValue(?string $value): void
     {
         $this->value = $value;
-        return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUpdated()
+    public function isUpdated(): bool
     {
         return $this->updated;
     }
 
-    /**
-     * @param mixed $updated
-     * @return Test
-     */
-    public function setUpdated($updated)
+    public function setUpdated(bool $updated): void
     {
         $this->updated = $updated;
-        return $this;
     }
 }
