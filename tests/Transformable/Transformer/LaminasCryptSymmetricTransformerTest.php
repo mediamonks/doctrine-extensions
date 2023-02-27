@@ -21,47 +21,47 @@ class LaminasCryptSymmetricTransformerTest extends TestCase
         return new LaminasCryptSymmetricTransformer(self::KEY);
     }
 
-    public function testBinaryDefaultEnabled()
+    public function testBinaryDefaultEnabled(): void
     {
         $this->assertTrue($this->getTransformerBinary()->getBinary());
     }
 
-    public function testDisableBinary()
+    public function testDisableBinary(): void
     {
         $this->assertFalse($this->getTransformerHex()->getBinary());
     }
 
-    public function testTransformHex()
+    public function testTransformHex(): void
     {
         $encrypted = $this->getTransformerHex()->transform(self::VALUE_HEX);
         $this->assertEquals(self::VALUE_HEX, $this->getTransformerHex()->reverseTransform($encrypted));
     }
 
-    public function testReverseTransformHex()
+    public function testReverseTransformHex(): void
     {
         $encrypted = $this->getTransformerHex()->transform(self::VALUE_HEX);
         $this->assertEquals(self::VALUE_HEX, $this->getTransformerHex()->reverseTransform($encrypted));
     }
 
-    public function testTransformReverseTransformHex()
+    public function testTransformReverseTransformHex(): void
     {
         $transformer = $this->getTransformerHex();
         $this->assertEquals(self::VALUE_HEX, $transformer->reverseTransform($transformer->transform(self::VALUE_HEX)));
     }
 
-    public function testTransformBinary()
+    public function testTransformBinary(): void
     {
         $encrypted = $this->getTransformerBinary()->transform(self::VALUE_BINARY);
         $this->assertEquals(hex2bin(bin2hex(self::VALUE_BINARY)), $this->getTransformerBinary()->reverseTransform($encrypted));
     }
 
-    public function testReverseTransformBinary()
+    public function testReverseTransformBinary(): void
     {
         $encrypted = $this->getTransformerBinary()->transform(self::VALUE_BINARY);
         $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform($encrypted));
     }
 
-    public function testTransformReverseTransformBinary()
+    public function testTransformReverseTransformBinary(): void
     {
         $this->assertEquals(self::VALUE_BINARY, $this->getTransformerBinary()->reverseTransform($this->getTransformerBinary()->transform(self::VALUE_BINARY)));
     }

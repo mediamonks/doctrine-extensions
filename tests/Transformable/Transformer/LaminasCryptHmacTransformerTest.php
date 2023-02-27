@@ -2,10 +2,10 @@
 
 namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 
+use Laminas\Crypt\Hmac;
 use MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptHmacTransformer;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use PHPUnit\Framework\TestCase;
-use Laminas\Crypt\Hmac;
 
 class LaminasCryptHmacTransformerTest extends TestCase
 {
@@ -14,20 +14,17 @@ class LaminasCryptHmacTransformerTest extends TestCase
     const BINARY = false;
     const VALUE = 'foobar';
 
-    /**
-     * @var TransformerInterface
-     */
-    protected $transformer;
+    protected TransformerInterface $transformer;
 
     protected function setUp(): void
     {
         $this->transformer = new LaminasCryptHmacTransformer(self::KEY, [
             'algorithm' => self::ALGORITHM,
-            'binary'    => self::BINARY
+            'binary' => self::BINARY
         ]);
     }
 
-    public function testTransform()
+    public function testTransform(): void
     {
         $this->assertEquals(
             Hmac::compute(self::KEY, self::ALGORITHM, self::VALUE, self::BINARY),
@@ -35,7 +32,7 @@ class LaminasCryptHmacTransformerTest extends TestCase
         );
     }
 
-    public function testReverseTransform()
+    public function testReverseTransform(): void
     {
         $this->assertEquals(self::VALUE, $this->transformer->reverseTransform(self::VALUE));
     }

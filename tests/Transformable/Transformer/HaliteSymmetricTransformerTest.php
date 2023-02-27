@@ -5,6 +5,7 @@ namespace MediaMonks\Doctrine\Tests\Transformable\Transformer;
 use MediaMonks\Doctrine\Transformable\Transformer\HaliteSymmetricTransformer;
 use ParagonIE\Halite\KeyFactory;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class HaliteSymmetricTransformerTest extends TestCase
 {
@@ -27,43 +28,56 @@ class HaliteSymmetricTransformerTest extends TestCase
         unlink(self::ENCRYPTION_KEY_PATH);
     }
 
-    protected function getTransformerHex()
+    protected function getTransformerHex(): HaliteSymmetricTransformer
     {
-        return new HaliteSymmetricTransformer(self::ENCRYPTION_KEY_PATH, ['binary' => false]);
+        try {
+            return new HaliteSymmetricTransformer(self::ENCRYPTION_KEY_PATH, ['binary' => false]);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
-    protected function getTransformerBinary()
+    protected function getTransformerBinary(): HaliteSymmetricTransformer
     {
         return new HaliteSymmetricTransformer(self::ENCRYPTION_KEY_PATH);
     }
 
-    public function testBinaryDefaultEnabled()
+    public function testBinaryDefaultEnabled(): void
     {
         $transformer = new HaliteSymmetricTransformer(self::ENCRYPTION_KEY_PATH);
         $this->assertTrue($transformer->getBinary());
     }
 
-    public function testTransformHex()
+    public function testTransformHex(): void
     {
-        $x = $this->getTransformerHex()->transform(self::VALUE_TO_ENCRYPT);
-        $y = $this->getTransformerHex()->reverseTransform($x);
-
+        try {
+            $x = $this->getTransformerHex()->transform(self::VALUE_TO_ENCRYPT);
+            $y = $this->getTransformerHex()->reverseTransform($x);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
         $this->assertEquals(self::VALUE_TO_ENCRYPT, $y);
     }
 
-    public function testTransformNullValue()
+    public function testTransformNullValue(): void
     {
-        $x = $this->getTransformerHex()->transform(null);
-        $y = $this->getTransformerHex()->reverseTransform($x);
-
+        try {
+            $x = $this->getTransformerHex()->transform(null);
+            $y = $this->getTransformerHex()->reverseTransform($x);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
         $this->assertEquals(null, $y);
     }
 
-    public function testTransformBinary()
+    public function testTransformBinary(): void
     {
-        $x = $this->getTransformerBinary()->transform(self::VALUE_TO_ENCRYPT);
-        $y = $this->getTransformerBinary()->reverseTransform($x);
-
+        try {
+            $x = $this->getTransformerBinary()->transform(self::VALUE_TO_ENCRYPT);
+            $y = $this->getTransformerBinary()->reverseTransform($x);
+        } catch (Throwable $e) {
+            $this->fail($e->getMessage());
+        }
         $this->assertEquals(self::VALUE_TO_ENCRYPT, $y);
     }
 }

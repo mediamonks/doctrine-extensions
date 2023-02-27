@@ -10,6 +10,6 @@ class PhpHmacTransformer extends AbstractHmacTransformer
             return false;
         }
 
-        return \hash_hmac($this->getAlgorithm(), $value, $this->getKey(), $this->getBinary());
+        return hash_hmac($this->getAlgorithm(), $value, $this->getKey(), $this->getBinary());
     }
 }

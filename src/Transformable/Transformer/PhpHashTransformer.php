@@ -10,6 +10,6 @@ class PhpHashTransformer extends AbstractHashTransformer
             return false;
         }
 
-        return \hash($this->getAlgorithm(), $value, $this->getBinary());
+        return hash($this->getAlgorithm(), $value, $this->getBinary());
     }
 }
