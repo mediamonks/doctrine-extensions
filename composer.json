@@ -34,7 +34,7 @@
     },
     "require-dev": {
         "defuse/php-encryption": "^2.0",
-        "laminas/laminas-crypt": "^3.4",
+        "laminas/laminas-crypt": "^3.10",
         "phpunit/phpunit": "^9.5",
         "paragonie/halite": "^v5.0",
         "mockery/mockery": "^1.4",
