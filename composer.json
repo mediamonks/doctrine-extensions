@@ -26,6 +26,10 @@
         {
             "name": "Bas Bloembergen",
             "email": "basb@mediamonks.com"
+        },
+        {
+            "name": "Edwin Luijten",
+            "email": "edwin@mediamonks.com"
         }
     ],
     "require": {
