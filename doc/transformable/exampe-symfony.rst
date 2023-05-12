@@ -25,11 +25,7 @@ Configure services:
 
         mediamonks.doctrine.transformable.transformer.laminas_crypt_hmac:
             class: MediaMonks\Doctrine\Transformable\Transformer\LaminasCryptHmacTransformer
-            arguments: [%hmac_key%]
-
-        mediamonks.doctrine.transformable.transformer.halite_encrypt:
-            class: MediaMonks\Doctrine\Transformable\Transformer\LibsodiumSymmetricTransformer
-            arguments: [%encryption_key%]
+            arguments: ["%hmac_key%"]
 
         mediamonks.doctrine.transformable.transformer_pool:
             class: MediaMonks\Doctrine\Transformable\Transformer\TransformerPool
@@ -38,7 +34,6 @@ Configure services:
                 - [set, ['laminas_encrypt', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_symmetric"]]
                 - [set, ['laminas_hash', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_hash"]]
                 - [set, ['laminas_hmac', "@mediamonks.doctrine.transformable.transformer.laminas_crypt_hmac"]]
-                - [set, ['halite_encrypt', "@mediamonks.doctrine.transformable.transformer.halite_encrypt"]]
 
         doctrine.transformable.subscriber:
             class: MediaMonks\Doctrine\Transformable\TransformableSubscriber
