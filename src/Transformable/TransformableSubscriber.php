@@ -121,15 +121,15 @@ class TransformableSubscriber extends MappedEventSubscriber
         $meta = $objectManager->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($objectManager, $meta->name);
         $transformableConfig = $config[self::TRANSFORMABLE] ?? [];
-        if (!empty($transformableConfig)) {
-            $changeSetBeforeTransformations = $unitOfWork->getEntityChangeSet($entity);
-            foreach ($transformableConfig as $column) {
-                $this->handleField($entity, $method, $column, $meta);
-            }
-            $eventAdapter->recomputeSingleObjectChangeSet($unitOfWork, $meta, $entity);
-            $changeSetAfterTransformations = &$unitOfWork->getEntityChangeSet($entity);
-            $changeSetAfterTransformations = array_intersect_key($changeSetAfterTransformations, $changeSetBeforeTransformations);
+        if (empty($transformableConfig)) return;
+        
+        $changeSetBeforeTransformations = $unitOfWork->getEntityChangeSet($entity);
+        foreach ($transformableConfig as $column) {
+            $this->handleField($entity, $method, $column, $meta);
         }
+        $eventAdapter->recomputeSingleObjectChangeSet($unitOfWork, $meta, $entity);
+        $changeSetAfterTransformations = &$unitOfWork->getEntityChangeSet($entity);
+        $changeSetAfterTransformations = array_intersect_key($changeSetAfterTransformations, $changeSetBeforeTransformations);
     }
 
     /**
