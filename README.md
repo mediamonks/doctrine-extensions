@@ -39,7 +39,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 
 You need:
 
-- **PHP >= 8.0**
+- **PHP >= 8.1**
 
 To use the library.
 
