@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
-use Gedmo\Mapping\Event\AdapterInterface;
 use Gedmo\Mapping\MappedEventSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
@@ -22,6 +21,7 @@ use ReflectionProperty;
 /**
  * @author Robert Slootjes <robert@mediamonks.com>
  * @author Bas Bloembergen <basb@mediamonks.com>
+ * @author Marco Brotas <marco@mediamonks.com>
  */
 class TransformableSubscriber extends MappedEventSubscriber
 {
@@ -29,7 +29,7 @@ class TransformableSubscriber extends MappedEventSubscriber
 
     protected array $entityFieldValues = [];
 
-    public function __construct(protected readonly TransformerPool $transformerPool)
+    public function __construct(protected TransformerPool $transformerPool)
     {
         parent::__construct();
     }
@@ -38,9 +38,11 @@ class TransformableSubscriber extends MappedEventSubscriber
     {
         return [
             Events::loadClassMetadata,
-            Events::onFlush,
-            Events::postPersist,
+
             Events::postLoad,
+            Events::onFlush,
+
+            Events::postPersist,
             Events::postUpdate,
         ];
     }
@@ -49,6 +51,14 @@ class TransformableSubscriber extends MappedEventSubscriber
     {
         $eventAdapter = $this->getEventAdapter($eventArguments);
         $this->loadMetadataForObjectClass($eventAdapter->getObjectManager(), $eventArguments->getClassMetadata());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function postLoad(PostLoadEventArgs $eventArguments): void
+    {
+        $this->reverseTransform($eventArguments, $eventArguments->getObject());
     }
 
     /**
@@ -70,14 +80,6 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @throws Exception
      */
-    public function postLoad(PostLoadEventArgs $eventArguments): void
-    {
-        $this->reverseTransform($eventArguments, $eventArguments->getObject());
-    }
-
-    /**
-     * @throws Exception
-     */
     public function postUpdate(PostUpdateEventArgs $eventArguments): void
     {
         $this->reverseTransform($eventArguments, $eventArguments->getObject());
@@ -92,12 +94,12 @@ class TransformableSubscriber extends MappedEventSubscriber
         $objectManager = $eventAdapter->getObjectManager();
         $unitOfWork = $objectManager->getUnitOfWork();
 
-        foreach ($eventAdapter->getScheduledObjectUpdates($unitOfWork) as $entity) {
-            $this->handle($eventAdapter, $objectManager, $unitOfWork, $entity, TransformerMethod::TRANSFORM);
+        foreach ($eventAdapter->getScheduledObjectInsertions($unitOfWork) as $entity) {
+            $this->handle($objectManager, $unitOfWork, $entity, TransformerMethod::TRANSFORM);
         }
 
-        foreach ($eventAdapter->getScheduledObjectInsertions($unitOfWork) as $entity) {
-            $this->handle($eventAdapter, $objectManager, $unitOfWork, $entity, TransformerMethod::TRANSFORM);
+        foreach ($eventAdapter->getScheduledObjectUpdates($unitOfWork) as $entity) {
+            $this->handle($objectManager, $unitOfWork, $entity, TransformerMethod::TRANSFORM);
         }
     }
 
@@ -110,43 +112,57 @@ class TransformableSubscriber extends MappedEventSubscriber
         $objectManager = $eventAdapter->getObjectManager();
         $unitOfWork = $objectManager->getUnitOfWork();
 
-        $this->handle($eventAdapter, $objectManager, $unitOfWork, $entity, TransformerMethod::REVERSE_TRANSFORM);
+        $this->handle($objectManager, $unitOfWork, $entity, TransformerMethod::REVERSE_TRANSFORM);
     }
 
     /**
      * @throws Exception
      */
-    protected function handle(AdapterInterface $eventAdapter, EntityManagerInterface|ObjectManager $objectManager, UnitOfWork $unitOfWork, object $entity, TransformerMethod $method): void
+    protected function handle(EntityManagerInterface|ObjectManager $objectManager, UnitOfWork $unitOfWork, object $entity, TransformerMethod $method): void
     {
         $meta = $objectManager->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($objectManager, $meta->name);
         $transformableConfig = $config[self::TRANSFORMABLE] ?? [];
-        if (empty($transformableConfig)) return;
-        
-        $changeSetBeforeTransformations = $unitOfWork->getEntityChangeSet($entity);
-        foreach ($transformableConfig as $column) {
-            $this->handleField($entity, $method, $column, $meta);
+        if (!empty($transformableConfig)) {
+            foreach ($transformableConfig as $column) {
+                $this->handleField($entity, $method, $column, $meta, $unitOfWork);
+            }
         }
-        $eventAdapter->recomputeSingleObjectChangeSet($unitOfWork, $meta, $entity);
-        $changeSetAfterTransformations = &$unitOfWork->getEntityChangeSet($entity);
-        $changeSetAfterTransformations = array_intersect_key($changeSetAfterTransformations, $changeSetBeforeTransformations);
     }
+
+    /*------------------------------------------------------------------*/
 
     /**
      * @throws Exception
      */
-    protected function handleField(object $entity, TransformerMethod $method, array $column, ClassMetadata $meta): void
+    protected function handleField(object $entity, TransformerMethod $method, array $column, ClassMetadata $meta, UnitOfWork $unitOfWork): void
     {
         $field = $column['field'];
-        $oid = spl_object_hash($entity);
+        $transformer = $this->getTransformer($column['name']);
+        $oid = spl_object_id($entity);
 
         $reflectionProperty = $meta->getReflectionProperty($field);
-        $oldValue = $this->getEntityValue($reflectionProperty, $entity);
-        $newValue = $this->getNewValue($oid, $field, $column['name'], $method, $oldValue);
+        $originalValue = $this->getEntityValue($reflectionProperty, $entity);
+
+        $newValue = $this->getNewValue($oid, $field, $transformer, $method, $originalValue);
         $reflectionProperty->setValue($entity, $newValue);
 
+        // replace the uow original data with the reverse transformed, to avoid detecting useless changes.
+        $unitOfWork->setOriginalEntityProperty($oid, $field, $newValue);
+
+        // correct uow change set
+        $changeSet = &$unitOfWork->getEntityChangeSet($entity);
+        if (isset($changeSet[$field])) {
+            if ($newValue === $changeSet[$field][0] && $newValue !== null) {
+                unset($changeSet[$field]);
+                if (empty($changeSet)) $unitOfWork->clearEntityChangeSet($oid);
+            } else {
+                $changeSet[$field][1] = $newValue;
+            }
+        }
+
         if ($method === TransformerMethod::REVERSE_TRANSFORM) {
-            $this->storeOriginalFieldData($oid, $field, $oldValue, $newValue);
+            $this->storeOriginalFieldData($oid, $field, $originalValue, $newValue);
         }
     }
 
@@ -164,30 +180,26 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @throws Exception
      */
-    protected function getNewValue(string $oid, string $field, string $transformerName, TransformerMethod $method, mixed $value): mixed
+    protected function getNewValue(string $oid, string $field, TransformerInterface $transformer, TransformerMethod $method, mixed $value): mixed
     {
         if ($method === TransformerMethod::TRANSFORM
-            && $this->getEntityFieldValue($oid, $field, TransformableState::PLAIN) === $value
-        ) {
+            && $this->getEntityFieldValue($oid, $field, TransformableState::PLAIN) === $value) {
             return $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
         }
 
-        return $this->performTransformerOperation($transformerName, $method, $value);
+        return $this->performTransformerOperation($transformer, $method, $value);
     }
 
     /**
      * @throws Exception
      */
-    protected function performTransformerOperation(string $transformerName, TransformerMethod $method, mixed $oldValue): mixed
+    protected function performTransformerOperation(TransformerInterface $transformer, TransformerMethod $method, mixed $originalValue): mixed
     {
-        if (is_null($oldValue)) {
-            return null;
-        }
-        $transformer = $this->getTransformer($transformerName);
+        if ($originalValue === null) return null;
 
         return match ($method) {
-            TransformerMethod::TRANSFORM => $transformer->transform($oldValue),
-            TransformerMethod::REVERSE_TRANSFORM => $transformer->reverseTransform($oldValue)
+            TransformerMethod::TRANSFORM => $transformer->transform($originalValue),
+            TransformerMethod::REVERSE_TRANSFORM => $transformer->reverseTransform($originalValue)
         };
     }
 
